@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>EIS Work Flow Tool</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&display=swap">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+<style>
+:root{--bg:#eef1f5;--card:#fff;--tx:#14213d;--mut:#6a778b;--line:#dfe5ed;--side:#17244a;--acc:#10a5d8;--accb:#e3f5fb;--gold:#a8996a;--ok:#2f9e44;--wn:#f08c00;--bd:#d6453d;--okb:#d8f3e2;--okt:#146c3a;--wnb:#fdebc8;--wnt:#8a4b00;--bdb:#fbdcdc;--bdt:#a4161a;--prb:#dce8fb;--prt:#0b5cd5;--ppb:#d2f1ee;--ppt:#0b6b66;color-scheme:light}
+@media (prefers-color-scheme:dark){:root{--bg:#0b121d;--card:#141e2f;--tx:#e6ecf5;--mut:#97a6bd;--line:#26334a;--side:#0a1226;--acc:#35c0ee;--accb:#10303c;--okb:#10341e;--okt:#5ee08f;--wnb:#3a2d0a;--wnt:#fbbf4a;--bdb:#3d1616;--bdt:#ff8a8a;--prb:#15264a;--prt:#6ea4ff;--ppb:#0f3330;--ppt:#5eead4;color-scheme:dark}}
+*{box-sizing:border-box}html{height:100%}
+body{margin:0;height:100%;background:var(--bg);color:var(--tx);font:15px/1.45 Barlow,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+button,select,input,textarea{font:inherit;color:inherit}button{cursor:pointer}
+:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+.app{display:grid;grid-template-columns:96px 1fr;min-height:100%}
+aside{background:var(--side);color:#fff;display:flex;flex-direction:column;align-items:center;gap:18px;padding:18px 0;position:sticky;top:0;height:100vh}
+.brand{font-weight:700;font-size:20px;letter-spacing:.04em;margin-bottom:34px}
+.ni{background:none;border:0;color:#cfd6e8;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:12px;padding:0}
+.ni i{font-style:normal;width:46px;height:46px;border-radius:50%;display:grid;place-items:center;font-size:22px}
+.ni.on i{background:var(--gold);color:#fff}.ni.on{color:#fff}
+main{padding:14px 24px 24px;min-width:0}
+.top{display:flex;justify-content:space-between;align-items:center;gap:10px;border-bottom:1px solid var(--line);padding-bottom:10px;margin-bottom:16px}
+.top small{color:var(--gold);font-weight:600;font-size:17px;display:block}.top h1{margin:0;font-size:26px;font-weight:500}
+.usr{display:flex;align-items:center;gap:10px;text-align:right}.usr b{display:block;font-weight:600}.usr span{font-size:12px;color:var(--mut)}
+.av{width:36px;height:36px;border-radius:50%;background:var(--side);color:#fff;display:grid;place-items:center;font-weight:600;font-size:13px}
+.sm{border:1px solid var(--line);background:var(--card);border-radius:6px;padding:4px 10px;font-size:12.5px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:14px 16px;margin-bottom:14px}
+.ord{display:flex;flex-wrap:wrap;padding:0}
+.oh{padding:14px 16px;flex:1 1 200px;border-right:1px solid var(--line)}
+.mo{font-weight:600;margin-bottom:6px}.mo i{font-style:normal;background:#facc15;color:#000;font-size:12px;padding:1px 6px;border-radius:3px;margin-left:4px}
+select,input[type=date],input[type=text],input[type=number],input[type=email],input[type=password],input[type=search],textarea{padding:7px;border:1px solid var(--line);border-radius:6px;background:var(--card);color:var(--tx)}
+.oh select{width:100%;padding:8px;border-color:var(--tx);font-weight:500}
+.oc{padding:12px 16px;flex:1 1 150px;border-right:1px solid var(--line)}.oc:last-child{border-right:0}
+.fld{margin-bottom:8px}.fld span{display:block;font-size:12px;color:var(--mut)}.fld b{font-weight:500;font-size:16px}
+.oc select,.oc input{font-size:13px;padding:3px}
+.ch{display:flex;justify-content:space-between;align-items:center;gap:8px;font-weight:600;text-transform:uppercase;margin-bottom:10px}.ch em{font-style:normal;color:var(--ok)}
+.chips{display:flex;justify-content:center;flex-wrap:wrap;gap:8px;margin:6px 0 14px}
+.chip{display:flex;gap:12px;padding:8px 14px;border:1px solid;border-radius:6px;font-weight:600}
+.chip.od{background:var(--bd);color:#fff;border-color:var(--bd)}.chip.cu{background:#fdecc8;color:#4a3300;border-color:#f0b24b}.chip.co{background:#e6f4d7;color:#26500f;border-color:#8cc152}.chip.pd{background:#dff3f8;color:#0a4f66;border-color:#7fd0e8}
+.chip.on{outline:3px solid var(--acc);outline-offset:1px}
+.mss{display:flex;gap:12px;overflow-x:auto;padding:2px 2px 8px}
+.ms{flex:0 0 270px;border:1px solid var(--line);border-radius:8px;padding:14px;background:var(--card);cursor:pointer}
+.ms.on{border-color:var(--acc);box-shadow:0 0 0 1px var(--acc)}
+.ms h3{margin:0 0 4px;font-size:17px;font-weight:600;text-transform:uppercase}.ms p{margin:0 0 12px;font-size:13px;color:var(--mut);min-height:38px}
+.bt{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.pill{border:1px solid var(--acc);background:var(--card);color:var(--acc);border-radius:99px;padding:4px 14px;font-size:13px;font-weight:500}
+.tag{font-size:12px;font-weight:600;padding:3px 10px;border-radius:99px;white-space:nowrap}
+.Complete{background:var(--okb);color:var(--okt)}.On{background:var(--prb);color:var(--prt)}.Pp{background:var(--ppb);color:var(--ppt)}.Risk{background:var(--wnb);color:var(--wnt)}.Delayed{background:var(--bdb);color:var(--bdt)}
+.stp{display:flex;overflow-x:auto;border:1px solid var(--acc);border-radius:8px;padding:12px 8px 10px;margin-top:6px}
+.sp{flex:1 0 130px;text-align:center;position:relative;padding:0 6px}
+.sp .lbl{height:62px;font-size:12px;line-height:1.25;display:flex;align-items:flex-end;justify-content:center;overflow:hidden}
+.sp::before{content:"";position:absolute;left:-50%;width:100%;top:81px;height:4px;background:var(--line)}
+.sp:first-child::before{display:none}.sp.done::before,.sp.prog::before{background:var(--ok)}
+.dot{position:relative;z-index:1;width:22px;height:22px;border-radius:50%;margin:8px auto 6px;background:#c3cad6;color:#fff;font-size:13px;line-height:22px}
+.sp.done .dot{background:var(--ok)}.sp.prog .dot{background:var(--wn)}
+.sub{font-size:12px;color:var(--mut)}.sp.prog .sub{color:var(--wn)}
+.bot{display:grid;grid-template-columns:minmax(260px,1fr) 2fr;gap:14px}.bot .card{margin:0}
+.trk{position:relative;height:10px;border-radius:99px;background:var(--line);margin:22px 0 12px}
+.trk i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--acc),#0b5cd5)}
+.trk svg{position:absolute;top:-10px;width:32px;height:30px;transform:translateX(-50%);fill:var(--side)}
+.pills{display:flex;flex-wrap:wrap;gap:8px}.pills .pill{max-width:230px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tk{display:flex;gap:10px;align-items:center;border:1px solid var(--line);border-radius:8px;padding:10px;margin-bottom:6px;background:var(--card);cursor:pointer}
+.tk input{width:20px;height:20px;accent-color:var(--acc)}
+.tk.d{background:var(--okb);border-color:var(--ok)}.tk.d input{accent-color:var(--ok)}.tk.d span{color:var(--okt);font-weight:500}
+.bar{height:8px;background:var(--line);border-radius:99px;overflow:hidden;margin:8px 0}.bar i{display:block;height:100%;background:var(--acc)}
+.row{display:flex;justify-content:space-between;align-items:center;gap:8px}.mut{color:var(--mut);font-size:13px}
+.fl{font-size:13px;padding:6px 0;border-bottom:1px solid var(--line)}
+table{border-collapse:collapse;width:100%;font-size:12.5px}th,td{padding:4px;text-align:center}td.n{text-align:left;font-size:13px;white-space:nowrap}
+.hc{border-radius:6px;padding:8px 0;cursor:pointer;font-weight:600;min-width:40px}
+.ol{overflow-x:auto}.olw{min-width:1200px}
+.oh2,.or{display:grid;grid-template-columns:240px 1fr 120px 36px;align-items:center;gap:10px}
+.oh2{font-size:12px;font-weight:600;padding:6px 10px;border-bottom:1px solid var(--line)}
+.or{border:1px solid var(--line);border-radius:8px;padding:10px;margin-top:8px;background:var(--card);cursor:pointer}.or:hover{border-color:var(--acc)}
+.tl{display:grid;grid-template-columns:repeat(9,1fr)}
+.tc{position:relative;text-align:center;font-size:12px;color:var(--mut)}
+.tc.h{color:var(--tx);font-weight:600;line-height:1.2}.tc.h small{display:block;font-weight:400;color:var(--mut);font-size:10.5px}
+.tc::before{content:"";position:absolute;top:7px;left:-50%;width:100%;border-top:2px solid var(--ok)}
+.tc.h::before,.tc:first-child::before{display:none}
+.tc.todo::before,.tc.late::before{border-top-style:dashed}
+.tc i{position:relative;z-index:1;display:block;width:14px;height:14px;border-radius:50%;margin:0 auto 6px;background:var(--ok);border:2px solid var(--ok)}
+.tc.todo i{background:var(--card)}.tc.cur i{background:#facc15;border-color:#e0a800;box-shadow:0 0 0 3px rgba(250,204,21,.3)}.tc.late i{background:var(--card);border-color:var(--bd)}.tc.cur.late i{background:var(--bd)}
+.tc.done,.tc.cur{color:var(--tx)}
+.tb{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px}.tb input{flex:1 1 200px;padding:9px 12px}.tb select{padding:8px}
+.lt{border:1px solid var(--side);border-radius:99px;padding:2px 12px;font-size:13px;font-weight:500;background:var(--accb);display:inline-block}
+.mt{display:flex;gap:12px;font-size:12.5px;color:var(--mut);margin-top:3px;flex-wrap:wrap}
+.fm{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px}.fm label{display:flex;flex-direction:column;font-size:12.5px;color:var(--mut);gap:3px}
+textarea{width:100%;font-family:ui-monospace,Consolas,monospace;font-size:12.5px}
+.login{max-width:400px;margin:8vh auto;text-align:center;padding:16px}.login input{display:block;width:100%;margin:8px 0;padding:11px;border-radius:8px}
+.err{color:var(--bdt);font-size:13px;margin:6px 0}
+.btn{padding:12px;border:0;border-radius:8px;background:var(--acc);color:#fff;font-weight:600}.login .btn{width:100%}
+.toast{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);background:var(--tx);color:var(--bg);padding:8px 16px;border-radius:8px;font-size:13px;max-width:90%}
+.rpt{border-top:12px solid #d6192b;padding-top:6px}.rpt h2{margin:6px 0 12px;font-size:26px;text-transform:uppercase}
+.rg{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:6px}
+.rgl{background:#8dc63f;color:#14213d;font-weight:700;text-align:center;font-size:13px;padding:8px 6px;border:2px solid #8dc63f;line-height:1.2;min-height:46px;display:grid;place-items:center}
+.rgv{border:2px solid #8dc63f;background:var(--card);min-height:84px;display:grid;place-items:center;text-align:center;padding:6px;font-size:16px;gap:4px;word-break:break-word}
+.rgv input{width:100%;font-size:13px;padding:4px;min-width:0}.rg>div{display:flex;flex-direction:column}.rg>div>.rgv{flex:1}.rg .cfw{grid-column:span 2}.rgv.cft{padding:8px 14px}
+.cf{display:grid;grid-template-columns:auto 1fr;gap:8px 16px;width:100%;text-align:left;font-size:14px;align-items:center}.cf b{color:var(--mut);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.04em}.cf span{overflow-wrap:anywhere}.cf input{min-width:0}
+.bn{border:1px solid var(--tx);background:var(--bg);text-align:center;font-size:22px;padding:8px;margin:14px 0 10px;text-transform:uppercase}
+.dg{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;align-items:start}
+.di{display:grid;grid-template-columns:1fr 104px;border:1px solid var(--tx);margin-bottom:-1px;background:var(--card)}
+.dl{padding:6px 8px;font-size:14px;display:flex;align-items:center}.dl input{width:100%;padding:3px;font-size:13px}
+.dv{padding:4px;border-left:1px solid var(--tx);display:flex;flex-direction:column;justify-content:center;gap:3px;text-align:center;font-weight:600;min-height:34px}.dv input,.dv select{width:100%;padding:2px;font-size:12px}
+.st-g{background:#9fdcb3;color:#0b3d1d}.st-a{background:#ffd479;color:#4a3300}.st-r{background:#f4958f;color:#5c0b08}.st-n{background:#e3e7ed;color:#3a4558}
+.lg{display:flex;gap:14px;flex-wrap:wrap;font-size:13px;margin:8px 0}.lg span{display:inline-flex;align-items:center;gap:6px}.lg i{width:16px;height:16px;border:1px solid var(--tx);display:inline-block}
+.rk{border:1px solid var(--tx);min-height:90px;padding:10px;white-space:pre-wrap;background:var(--card)}.rk.red{border-color:var(--bd);background:var(--bdb)}
+.qe{cursor:text}.qe:hover{outline:2px dashed var(--acc);outline-offset:3px}
+.tin{width:100%;font-family:inherit;font-size:22px;font-weight:700;padding:6px 8px;text-transform:uppercase}.tin.tc2{width:70%;text-align:center;font-size:18px;font-weight:400}
+.rpt.pdf{--card:#fff;--tx:#14213d;--mut:#6a778b;--line:#dfe5ed;--bg:#eef1f5;--bd:#d6453d;--bdb:#fbdcdc;color:#14213d;background:#fff}
+.mo2{margin-top:8px;display:flex;flex-direction:column;gap:6px}.mo2 .sm{align-self:flex-start}
+.ro .qe{cursor:default}.ro .qe:hover{outline:0}
+@media print{.qe:hover{outline:0}}
+@media(max-width:900px){.dg{grid-template-columns:1fr}}
+@media print{aside,.noprint,.usr{display:none!important}.app{display:block}main{padding:0}*{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+@media(max-width:760px){.app{grid-template-columns:1fr}aside{flex-direction:row;height:auto;position:static;justify-content:center;gap:24px;padding:10px}.brand{margin:0}.ni i{width:38px;height:38px}main{padding:14px 12px}.bot{grid-template-columns:1fr}.oh,.oc{border-right:0;border-bottom:1px solid var(--line)}}
+</style>
+</head>
+<body><div id="app"></div>
+<script>
+var SB_URL="https://salkixszcxuhreglitag.supabase.co",SB_KEY="sb_publishable_bBR6sReYVjoMZwGThOysMg_h3NkHWcq";
+var sb=supabase.createClient(SB_URL,SB_KEY);
+var ST=[
+["K","EIS Kickoff (Internal)",["Perform ITC screening","Engine / Overhaul Contract established","EIS Readiness Kickoff Meeting with CFT and stakeholders","Spare Engine Option discussed","Refer to EIS Kickoff Guide","Collins Power/Controls and Aerostructures and PW team to support EIS"]],
+["M0","Welcome / Intro",["NDA and End User Certificate","Welcome package","Distribute EIS forms to customer","IPA draft","Contract signed","Get access to EngineWise Collaboration site"]],
+["M1","Milestone 1",["Customer forms completed","IPA executed","Establish spare parts and other account setup in SAP","Provide RSPL for spares and tooling","CTC initiate training with customer","Initiate engine regulatory approvals"]],
+["M2","Milestone 2",["Identify on-wing (LMS) maintenance provider","EngineWise access (tech pubs)"]],
+["M3","Midterm",["Mid Term Review","MRO / Vendor approval requirements","Tooling orders placed","Spare parts provisioning ordered","Customer training readiness","Engine Health Monitoring readiness","PW leaflet and Delivery handbook (applicable to 30K)"]],
+["M4","Milestone 4",["IP gap analysis performed (spare parts and tooling)","LMS / MRO set-up completed","Vendor QA approval completed"]],
+["M5","Final-Prep Bootcamp",["Final Prep Bootcamp review","Customer training completed","Establish in-region / on-site support readiness"]],
+["M6","TOT: Title of Transfer",["Aircraft Transfer of Title","Engine Health Monitoring setup completed","PW team on-site to support EIS completed","Conduct MFA survey"]],
+["M7","EIS + 12 months",["Engine Health Monitoring confirmed operational","Post EIS AAR scheduled"]]];
+var OFF=[0,1,2,3,4,5,6,9,21],PROGS=["PW1100G","PW1500G","PW1900G","PW1100G/2-JM"],G={Delayed:"od",On:"cu",Risk:"cu",Complete:"co",Pp:"pd"},TOT=ST.reduce((a,s)=>a+s[2].length,0);
+var O=[],PR=[],TID={},role=null,prof=null,uid=null,view="dash",cid=0,sel=0,flt="",msg="",q="",fp="",fs="",lerr="",lem="",busy=false,editing=false,mdOK=true;
+var e=s=>String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+var pad=n=>String(n).padStart(2,"0");
+var pd=s=>s?new Date(s+"T00:00:00"):null;
+var iso=d=>d?d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate()):"";
+var fm=d=>d?d.toLocaleDateString("en-GB"):"TBD";
+function dt(o,i){var m=o.md&&o.md[ST[i][0]];if(m)return m;var s=o.start;return new Date(s.getFullYear(),s.getMonth()+OFF[i],s.getDate())}
+function stt(o,i){var t=o.t[i],n=t.filter(Boolean).length,p=o.p[i];
+ if(n===t.length){if(p.some(f=>f.s==="Verified"))return["Complete","Complete"];if(p.some(f=>f.s==="Rejected")&&!p.some(f=>f.s==="Uploaded"))return["Risk","Document rejected"];return["Pp","Document pending"]}
+ var dy=(dt(o,i)-new Date())/864e5;if(dy<0)return["Delayed","Delayed"];if(dy<45&&n/t.length<.6)return["Risk","At risk"];return["On","On track"]}
+function pc(o){var a=0,b=0;o.t.forEach(t=>{a+=t.filter(Boolean).length;b+=t.length});return[Math.round(a/b*100),b-a]}
+function cur(o){for(var i=0;i<ST.length;i++)if(stt(o,i)[0]!=="Complete")return i;return ST.length-1}
+function vis(){return O}
+function me(){if(!O.length)return null;if(!O[cid]){cid=0;sel=cur(O[0])}return O[cid]}
+function err(r){if(r.error){msg="Error: "+r.error.message;render();return true}return false}
+async function loadAll(){
+ var r=await Promise.all([sb.from("tasks").select("id,milestone_code,sort").order("sort"),sb.from("customers").select("*").order("created_at"),sb.from("customer_tasks").select("customer_id,task_id,done"),sb.from("documents").select("*").order("created_at"),sb.from("profiles").select("id,name,email,role")]);
+ r.forEach(x=>{if(x.error)throw x.error});
+ TID={};r[0].data.forEach(t=>{(TID[t.milestone_code]=TID[t.milestone_code]||[]).push(t.id)});
+ PR=r[4].data;var DM={};r[2].data.forEach(x=>{DM[x.customer_id+":"+x.task_id]=x.done});
+ O=r[1].data.map(c=>({md:{},id:c.id,n:c.name,eng:c.program||PROGS[0],icao:c.icao||"",ctry:c.country||"",ac:c.aircraft||0,con:c.contract_type||"",tt:c.airframer_or_lessor||"",cfs:c.collins_flight_sens||"",fsr:c.fsr_name||"",cfd:c.cfd_name||"",sp:c.specialist_id,start:pd(c.start_date)||new Date(),eis:pd(c.eis_date),
+  t:ST.map((s,i)=>s[2].map((_,j)=>!!DM[c.id+":"+(TID[s[0]]||[])[j]])),
+  p:ST.map(s=>r[3].data.filter(d=>d.customer_id===c.id&&d.milestone_code===s[0]).map(d=>({id:d.id,f:d.file_name,s:d.status,path:d.file_path})))}));
+ await Promise.all(O.map(async o=>{var j=await readMd(o.id);Object.keys(j).forEach(c=>{o.md[c]=pd(j[c])})}))}
+async function readMd(id){var d=await sb.storage.from("documents").download(id+"/_dates.json");if(d.error)return{};try{return JSON.parse(await d.data.text())}catch(x){return{}}}
+async function writeMd(id,obj){return sb.storage.from("documents").upload(id+"/_dates.json",new Blob([JSON.stringify(obj)],{type:"application/json"}),{upsert:true,contentType:"application/json"})}
+var RC={},rcEdit=false,rcLogo="",TD={title:"EIS Customer Readiness: Welcome Report Card",dl:"Most critical EIS deliverables",rk:"Risk(s)"};
+var RCI=[["IPA/ End User Certificate (EUC) Signed","SAP Account Setup Completed","EngineWise (Tech Pubs) Access Provided","EngineWise (Resource) Access Provided","Airline Regulatory Approval Completed","RSPL Provided","Customer Requested A1 Tooling List","Joinder Agreement Executed"],["PW Tools - Ordered","PW Spare Parts - Ordered","Collins (Power Controls) - Spare Parts Ordered","Collins (Aerostructures) Tools - Ordered","Collins (Aerostructures) Spare Parts - Ordered","Engine Stand & Flight Support (24K only) Ordered","Engine Change Boot Strap Kit Ordered"],["Identified Line Maintenance Provider","MRO Approvals Completed","Warranty Handbook Provided","PW Engine Leasing (PWEL) Setup Completed","FSR Plan in Place","Engine Health Monitoring (EHM) Setup Completed","Engine Change Training Completed","Spare Engine Requirement met (Per contract)","Training (L&B & Boroscope) Completed"]];
+function rcItems(){var r=[];RCI.forEach((c,ci)=>c.forEach((l,ii)=>r.push({k:ci+"_"+ii,l:l,ci:ci})));return r}
+function nice(s){s=String(s||"");if(!s||s.indexOf(" ")>=0)return s;if(s.indexOf("@")>0)s=s.split("@")[0];return s.split(/[._-]+/).filter(Boolean).map(w=>w[0].toUpperCase()+w.slice(1)).join(" ")}
+function hdef(o){return{op:o.n,eis:o.eis?fm(o.eis):"TBD",tot:fm(dt(o,7)),con:o.con||"TBD",cfs:o.cfs||"",ac:"("+o.ac+") "+o.eng,cfd:nice(o.cfd),sales:"",fsr:nice(o.fsr),ctry:o.ctry||"",af:o.tt||""}}
+function autoS(v){v=String(v||"").trim().toLowerCase();if(!v)return"n";if(/^(y|yes|done|complete|completed|signed|provided|ordered)$/.test(v))return"g";if(/^(n|no|late|delayed|risk|at risk|critical)$/.test(v))return"r";var m=v.match(/^(\d+(\.\d+)?)\s*%$/);if(m){var n=+m[1];return n>=100?"g":n>0?"a":"n"}return"n"}
+function writeJson(id,name,obj){return sb.storage.from("documents").upload(id+"/"+name,new Blob([JSON.stringify(obj)],{type:"application/json"}),{upsert:true,contentType:"application/json"})}
+async function loadRc(o){RC[o.id]=null;var d=await sb.storage.from("documents").download(o.id+"/_reportcard.json"),j={};if(!d.error){try{j=JSON.parse(await d.data.text())||{}}catch(x){j={}}}j.h=j.h||{};j.i=j.i||{};j.risk=j.risk||"";j.logo=j.logo||"";j.tx=j.tx||{};RC[o.id]=j;render()}
+function lgHtml(){return (rcLogo?'<img src="'+rcLogo+'" alt="Logo preview" style="max-width:100%;max-height:70px">':'')+'<div><label class="sm" style="cursor:pointer;display:inline-block;margin:4px 0">Upload logo<input type="file" accept="image/*" data-a="rclogo" hidden></label>'+(rcLogo?' <button class="sm" data-a="rclogoclear">Remove</button>':'')+'</div>'}
+function setLogo(f){var rd=new FileReader();rd.onload=()=>{var im=new Image();im.onload=()=>{var sc=Math.min(1,360/im.width,160/im.height),c=document.createElement("canvas");c.width=Math.max(1,Math.round(im.width*sc));c.height=Math.max(1,Math.round(im.height*sc));c.getContext("2d").drawImage(im,0,0,c.width,c.height);rcLogo=c.toDataURL("image/png");var b=document.getElementById("lgbox");if(b)b.innerHTML=lgHtml()};im.onerror=()=>{msg="That file is not a readable image";render()};im.src=rd.result};rd.readAsDataURL(f)}
+async function saveRc(){var o=O[cid],d=hdef(o),g=id=>{var el=document.getElementById(id);return el?el.value.trim():""},h={},it={};
+ Object.keys(d).forEach(k=>{var v=g("h_"+k);if(v!==d[k])h[k]=v});
+ rcItems().forEach(x=>{var v=g("v_"+x.k),s=g("s_"+x.k),l=g("l_"+x.k)||x.l,r={};if(v)r.v=v;if(s)r.s=s;if(l!==x.l)r.l=l;if(Object.keys(r).length)it[x.k]=r});
+ var tx={};Object.keys(TD).forEach(k=>{var v=g("t_"+k);if(v&&v!==TD[k])tx[k]=v});
+ var j={h:h,i:it,tx:tx,risk:document.getElementById("rk").value,logo:rcLogo||""},r=await writeJson(o.id,"_reportcard.json",j);
+ if(r.error){msg="Could not save: "+r.error.message;return render()}RC[o.id]=j;rcEdit=false;msg="Report card saved";render()}
+function vRc(o){var rc=RC[o.id];if(rc===undefined){loadRc(o);rc=null}
+ var bar='<div class="row noprint" style="margin-bottom:10px;flex-wrap:wrap"><span style="display:flex;gap:8px;flex-wrap:wrap;align-items:center"><select data-a="cust" aria-label="Customer">'+uniq().map(x=>'<option value="'+O.indexOf(x)+'"'+(x.n===o.n?' selected':'')+'>'+e(x.n)+'</option>').join("")+'</select>'+modelSel(o,1)+'</span><span>'+(rcEdit?'<button class="btn" style="padding:8px 16px" data-a="rcsave">Save report card</button> <button class="sm" style="padding:8px 14px" data-a="rccancel">Cancel</button>':(role==="cust"?'':'<button class="sm" style="padding:8px 14px" data-a="rcedit" title="Edit report card" aria-label="Edit report card">&#9998; Edit</button> ')+'<button class="sm" style="padding:8px 14px" data-a="rcdl">Download</button>')+'</span></div>';
+ if(!rc)return bar+'<div class="card mut">Loading report card...</div>';
+ var d=hdef(o),H=k=>rc.h[k]!==undefined?rc.h[k]:d[k],ed=rcEdit,T=k=>rc.tx[k]!==undefined?rc.tx[k]:TD[k],bn=(k,st,sfx)=>'<div class="bn'+(ed?'':' qe')+'"'+st+(ed?'':' data-a="rcq" data-f="t_'+k+'" role="button" tabindex="0" title="Click to edit"')+'>'+(ed?'<input type="text" class="tin tc2" id="t_'+k+'" value="'+e(T(k))+'" aria-label="Section title">':e(T(k))+sfx)+'</div>',its=rcItems(),I=x=>rc.i[x.k]||{},S=x=>I(x).s||autoS(I(x).v);
+ var tv=k=>ed?'<input type="text" id="h_'+k+'" value="'+e(H(k))+'" aria-label="'+k+'">':e(H(k)||"-");
+ var cs=autoS(H("cfs")),ccl=cs==="g"?" st-g":cs==="r"?" st-r":"";
+ var op=ed?'<div id="lgbox">'+lgHtml()+'</div>'+tv("op"):(rc.logo?'<img src="'+rc.logo+'" alt="'+e(H("op"))+' logo" style="max-width:100%;max-height:70px">':'<b>'+e(H("op"))+'</b>');
+ var hc=(l,v,c,w)=>'<div'+(w?' class="'+w+'"':'')+'><div class="rgl">'+l+'</div><div class="rgv'+(c||"")+'">'+v+'</div></div>';
+ var h=bar+'<div class="rpt"><h2'+(ed?'':' class="qe" data-a="rcq" data-f="t_title" role="button" tabindex="0" title="Click to edit"')+'>'+(ed?'<input type="text" class="tin" id="t_title" value="'+e(T("title"))+'" aria-label="Report title">':e(T("title")))+'</h2><div class="rg">'+hc("Operator",op)+hc("EIS Date (Rev Service)",tv("eis"))+hc("First AC delivery (TOT)",tv("tot"))+hc("PW Contract type",tv("con"))+hc("Collins Flight Sense in place",tv("cfs"),ccl)+hc("# of AC &amp; Engine Model",tv("ac"))+hc("CFT",'<div class="cf"><b>CFD</b><span>'+tv("cfd")+'</span><b>Sales</b><span>'+tv("sales")+'</span><b>FSR</b><span>'+tv("fsr")+'</span></div>'," cft","cfw")+hc("Country",tv("ctry"))+hc("Aircraft Issued By",tv("af"))+'</div>';
+ var cnt={g:0,a:0,r:0,n:0};its.forEach(x=>cnt[S(x)]++);
+ h+=bn("dl","","")+'<div class="lg"><span><i class="st-g"></i>Complete ('+cnt.g+')</span><span><i class="st-a"></i>In progress ('+cnt.a+')</span><span><i class="st-r"></i>At risk ('+cnt.r+')</span><span><i class="st-n"></i>Not started / N/A ('+cnt.n+')</span></div><div class="dg">';
+ [0,1,2].forEach(ci=>{h+='<div>'+its.filter(x=>x.ci===ci).map(x=>{var s=S(x),lab=I(x).l||x.l;return '<div class="di"><div class="dl">'+(ed?'<input type="text" id="l_'+x.k+'" value="'+e(lab)+'" aria-label="Deliverable name">':e(lab))+'</div><div class="dv st-'+s+'">'+(ed?'<input type="text" id="v_'+x.k+'" value="'+e(I(x).v||"")+'" aria-label="Value"><select id="s_'+x.k+'" aria-label="Status colour">'+[["","Auto colour"],["g","Complete"],["a","In progress"],["r","At risk"],["n","N/A"]].map(q2=>'<option value="'+q2[0]+'"'+((I(x).s||"")===q2[0]?' selected':'')+'>'+q2[1]+'</option>').join("")+'</select>':e(I(x).v||""))+'</div></div>'}).join("")+'</div>'});
+ h+='</div>'+bn("rk",cnt.r?' style="background:var(--bdb);border-color:var(--bd)"':'',cnt.r?' - '+cnt.r+' at risk':'')+(ed?'<textarea id="rk" rows="5" aria-label="Risks">'+e(rc.risk)+'</textarea>':'<div class="rk qe'+(cnt.r?' red':'')+'" data-a="rcq" data-f="rk" role="button" tabindex="0" title="Click to edit risks">'+(e(rc.risk)||'<span class="mut">No risks recorded.</span>')+'</div>')+'<div class="mut noprint" style="margin-top:8px">Colour is automatic from what you type: Y, Yes, Done, Provided, Ordered or 100% turns green; N, No or At risk turns red; 1% to 99% turns amber; blank or 0% stays grey. Use the colour box beside any cell to set it yourself.</div></div>';return h}
+function uniq(){return O.filter((x,i)=>O.findIndex(y=>y.n===x.n)===i)}
+function modelSel(o,inline){var sb2=O.filter(x=>x.n===o.n),sl=sb2.length>1?'<select data-a="model" aria-label="Engine model">'+sb2.map(x=>'<option value="'+O.indexOf(x)+'"'+(x===o?' selected':'')+'>'+e(x.eng)+' ('+x.ac+' A/C)</option>').join("")+'</select>':'';
+ if(inline)return sl;if(!sl&&role!=="cfd")return "";return '<div class="mo2">'+sl+(role==="cfd"?'<button class="sm" data-a="addmodel">+ Add engine model</button>':'')+'</div>'}
+function vAddM(o){var ms=O.filter(x=>x.n===o.n).map(x=>e(x.eng)+" ("+x.ac+" A/C)").join(", ");
+ return '<div class="card"><div class="ch"><span>Add engine model for '+e(o.n)+'</span></div><p class="mut">Current models: '+ms+'. The new model gets its own task list, dates and report card. Other details are copied from the current model and can be changed afterwards with the pencil.</p><div class="fm"><label>Engine program<select id="am_p">'+PROGS.map(x=>'<option>'+x+'</option>').join("")+'</select></label><label>Number of aircraft<input id="am_a" type="number" min="0"></label></div><div style="margin-top:12px;display:flex;gap:8px"><button class="btn" data-a="addmsave">Save engine model</button><button class="sm" data-a="addmcancel" style="padding:10px 16px">Cancel</button></div></div>'}
+async function addModel(){var o=O[cid];if(role!=="cfd")return;var pg=document.getElementById("am_p").value,ac=+document.getElementById("am_a").value||0;
+ if(O.some(x=>x.n===o.n&&x.eng===pg)){msg=o.n+" already has "+pg+". Edit that model instead.";return render()}
+ var r=await sb.from("customers").insert({name:o.n,icao:o.icao,country:o.ctry,program:pg,aircraft:ac,contract_type:o.con,airframer_or_lessor:o.tt,collins_flight_sens:o.cfs,eis_date:o.eis?iso(o.eis):null,start_date:iso(o.start),specialist_id:o.sp||null,fsr_name:o.fsr,cfd_name:o.cfd});
+ if(r.error){msg="Could not save: "+r.error.message;return render()}
+ var nm=o.n;await loadAll();var k=O.findIndex(x=>x.n===nm&&x.eng===pg);cid=k>=0?k:0;sel=cur(O[cid]);view="dash";msg="Engine model added";render()}
+async function dlRc(){if(rcEdit){msg="Save your changes first, then download";return render()}
+ var el=document.querySelector(".rpt");if(!el)return;
+ if(typeof html2canvas==="undefined"||!(window.jspdf&&window.jspdf.jsPDF)){msg="The PDF tool could not load, so the print window opened instead";render();return window.print()}
+ msg="Preparing PDF...";render();el=document.querySelector(".rpt");el.classList.add("pdf");
+ try{var c=await html2canvas(el,{scale:2,backgroundColor:"#ffffff",ignoreElements:n=>n.classList&&n.classList.contains("noprint")}),J=window.jspdf.jsPDF,pdf=new J({orientation:"landscape",unit:"pt",format:"a4"}),W=pdf.internal.pageSize.getWidth(),H=pdf.internal.pageSize.getHeight(),k=Math.min((W-40)/c.width,(H-40)/c.height),w=c.width*k,h=c.height*k;
+  pdf.addImage(c.toDataURL("image/png"),"PNG",(W-w)/2,20,w,h);pdf.save("EIS_Report_Card_"+O[cid].n.replace(/[^\w]+/g,"_")+"_"+O[cid].eng.replace(/[^\w]+/g,"_")+"_"+iso(new Date())+".pdf");msg="Report card downloaded"}
+ catch(x){msg="Could not create the PDF: "+x.message}
+ el.classList.remove("pdf");render()}
+async function boot(){var s=(await sb.auth.getSession()).data.session;if(s)await enter(s.user);else render()}
+async function login(){lem=document.getElementById("em").value.trim();var pw=document.getElementById("pw").value;lerr="";busy=true;render();var r=await sb.auth.signInWithPassword({email:lem,password:pw});if(r.error){busy=false;lerr=r.error.message;return render()}await enter(r.data.user)}
+async function enter(u){uid=u.id;busy=true;render();var p=await sb.from("profiles").select("*").eq("id",uid).single();
+ if(p.error){lerr="Could not load your profile: "+p.error.message;busy=false;await sb.auth.signOut();role=null;return render()}
+ prof=p.data;role=prof.role==="cfd"?"cfd":prof.role==="customer"?"cust":"spec";
+ try{await loadAll()}catch(x){lerr=String(x.message||x);busy=false;await sb.auth.signOut();role=null;return render()}
+ busy=false;view="dash";var o=me();if(o)sel=cur(o);render()}
+async function logout(){await sb.auth.signOut();role=null;prof=null;O=[];RC={};rcEdit=false;render()}
+async function tog(o,i,j,v){o.t[i][j]=v;var r=await sb.from("customer_tasks").update({done:v,done_by:uid,done_at:v?new Date().toISOString():null}).eq("customer_id",o.id).eq("task_id",TID[ST[i][0]][j]);if(r.error){o.t[i][j]=!v;msg="Could not save: "+r.error.message}render()}
+async function upl(o,i,file){var code=ST[i][0],path=o.id+"/"+code+"/"+Date.now()+"_"+file.name.replace(/[^\w.\-]/g,"_");
+ msg="Uploading...";render();var u=await sb.storage.from("documents").upload(path,file);if(u.error){msg="Upload failed: "+u.error.message;return render()}
+ var r=await sb.from("documents").insert({customer_id:o.id,milestone_code:code,file_name:file.name,file_path:path,uploaded_by:uid}).select().single();if(r.error){msg="Could not save: "+r.error.message;return render()}
+ o.p[i].push({id:r.data.id,f:r.data.file_name,s:r.data.status,path:path});msg="Document attached, awaiting CFD verification";render()}
+async function setStatus(o,i,k,s){var d=o.p[i][k],r=await sb.from("documents").update({status:s}).eq("id",d.id);if(r.error){msg="Could not save: "+r.error.message}else{d.s=s;msg="Document "+s.toLowerCase()}render()}
+async function delDoc(o,i,k){if(!confirm("Remove this document?"))return;var d=o.p[i][k],r=await sb.from("documents").delete().eq("id",d.id);if(r.error){msg="Could not remove: "+r.error.message;return render()}await sb.storage.from("documents").remove([d.path]);o.p[i].splice(k,1);msg="Document removed";render()}
+async function openDoc(o,i,k){var w=window.open("","_blank"),r=await sb.storage.from("documents").createSignedUrl(o.p[i][k].path,120);if(r.error){if(w)w.close();msg="Could not open: "+r.error.message;return render()}if(w)w.location=r.data.signedUrl}
+async function upd(o,fields,local){var r=await sb.from("customers").update(fields).eq("id",o.id);if(r.error)msg="Could not save: "+r.error.message;else{Object.assign(o,local);msg="Saved"}render()}
+async function addCust(){var g=id=>document.getElementById(id).value.trim(),sp=g("fsp"),s=PR.find(p=>p.id===sp);if(!g("fn")){msg="Enter a customer name";return render()}
+ var r=await sb.from("customers").insert({name:g("fn"),icao:g("fi"),country:g("fc"),program:g("fpg"),aircraft:+g("fa")||0,contract_type:g("fo"),airframer_or_lessor:g("ft"),collins_flight_sens:g("fs2"),eis_date:g("fe")||null,start_date:g("fk")||iso(new Date()),specialist_id:sp||null,fsr_name:s?(s.name||s.email):"",cfd_name:prof.name||prof.email});
+ if(r.error){msg="Could not save: "+r.error.message;return render()}await loadAll();msg="Customer added";view="tasks";render()}
+async function importC(){var rows=document.getElementById("imp").value.split(/\r?\n/).map(l=>l.split("\t").map(s=>s.trim())).filter(a=>a[0]);if(rows.length&&/^(customer )?name$/i.test(rows[0][0]))rows.shift();if(!rows.length){msg="Paste rows first";return render()}
+ var D=s=>/^\d{4}-\d{2}-\d{2}$/.test(s||"")?s:null,today=iso(new Date());
+ var out=rows.map(a=>{var p=PR.find(x=>x.email&&a[10]&&x.email.toLowerCase()===a[10].toLowerCase());return{name:a[0],icao:a[1]||"",country:a[2]||"",program:a[3]||PROGS[0],aircraft:+a[4]||0,contract_type:a[5]||"",airframer_or_lessor:a[6]||"",collins_flight_sens:a[7]||"",eis_date:D(a[8]),start_date:D(a[9])||today,specialist_id:p?p.id:null,fsr_name:p?(p.name||p.email):"",cfd_name:prof.name||prof.email}});
+ var r=await sb.from("customers").insert(out);if(r.error){msg="Import failed: "+r.error.message;return render()}await loadAll();msg=out.length+" customers imported";view="tasks";render()}
+function fld(l,v){return '<div class="fld"><span>'+l+'</span><b>'+v+'</b></div>'}
+function oc(a,b){return '<div class="oc">'+a+b+'</div>'}
+function vDash(o){var L=vis(),p=pc(o),c=cur(o),cnt={od:0,cu:0,co:0,pd:0},cf=role==="cfd";ST.forEach((_,i)=>cnt[G[stt(o,i)[0]]]++);
+ var di=(id,v)=>'<input type="date" data-a="'+id+'" value="'+iso(v)+'" aria-label="'+id+'">',
+ pg=cf?'<select data-a="prog" aria-label="Program">'+PROGS.map(x=>'<option'+(o.eng===x?' selected':'')+'>'+x+'</option>').join("")+'</select>':e(o.eng),
+ sp=cf?'<select data-a="asg" aria-label="Specialist"><option value="">Not assigned</option>'+PR.filter(x=>x.role!=="cfd").map(x=>'<option value="'+x.id+'"'+(o.sp===x.id?' selected':'')+'>'+e(x.name||x.email)+'</option>').join("")+'</select>':e(o.fsr);
+ var ord='<div class="card ord"><div class="oh"><div class="mo">MY CUSTOMERS <i>'+uniq().length+'</i>'+(cf?'<button class="sm" data-a="edit" title="Edit customer details" aria-label="Edit customer details" style="margin-left:8px;font-size:15px">&#9998;</button>':'')+'</div><select data-a="cust" aria-label="Customer">'+uniq().map(x=>'<option value="'+O.indexOf(x)+'"'+(x.n===o.n?' selected':'')+'>'+e(x.n)+'</option>').join("")+'</select>'+modelSel(o)+'</div>'
+ +oc(fld("ICAO",e(o.icao)||"TBD"),fld("Country",e(o.ctry)))
+ +(cf?oc(fld("Kickoff date",di("sd",o.start)),fld("TOT",di("ed",o.eis))):oc(fld("Transfer of Title (TOT)",fm(dt(o,7))),fld("TOT (Rev Service)",fm(o.eis))))
+ +oc(fld("Contract Type",e(o.con)||"TBD"),fld("# Of AC and Engine Model",'('+o.ac+') '+pg))
+ +oc(fld("Airframer or Lessor",e(o.tt)||"TBD"),fld("Collins Flight Sens",e(o.cfs)||"TBD"))
+ +oc(fld("CFD",e(o.cfd)||"TBD"),fld("FSR",sp))+'</div>';
+ var h=editing&&cf?vEdit(o):ord;
+ h+='<div class="card"><div class="ch"><span>Report card</span></div><div class="chips">'+[["od","Overdue"],["cu","Current"],["co","Completed"],["pd","Document pending"]].map(k=>'<button class="chip '+k[0]+(flt===k[0]?' on':'')+'" data-a="flt" data-v="'+k[0]+'">'+k[1]+' <b>'+pad(cnt[k[0]])+'</b></button>').join("")+'</div><div class="mss">';
+ var shown=0;ST.forEach((s,i)=>{var st=stt(o,i),n=o.t[i].filter(Boolean).length;if(flt&&G[st[0]]!==flt)return;shown++;
+  h+='<div class="ms'+(sel===i?' on':'')+'" role="button" tabindex="0" data-a="sel" data-i="'+i+'"><h3>'+s[0]+': '+e(s[1])+'</h3><p>'+n+' of '+s[2].length+' tasks done. Due '+fm(dt(o,i))+'</p><div class="bt"><span class="tag '+st[0]+'">'+st[1]+'</span><button class="pill" data-a="dv" data-i="'+i+'">Detailed view</button></div></div>'});
+ if(!shown)h+='<div class="mut" style="padding:12px">No milestones match this filter. Select the filter again to clear it.</div>';
+ var t=o.t[sel],f=t.indexOf(false);
+ h+='</div><div class="stp">'+ST[sel][2].map((x,j)=>{var k=t[j]?"done":j===f?"prog":"todo";return '<div class="sp '+k+'"><div class="lbl">'+x+'</div><div class="dot">'+(t[j]?'&#10003;':'')+'</div><div class="sub">'+(t[j]?'Completed':j===f?'In progress':'Yet to start')+'</div></div>'}).join("")+'</div></div>';
+ var pend=[];ST.forEach((s,i)=>s[2].forEach((x,j)=>{if(!o.t[i][j])pend.push('<button class="pill" title="'+e(x)+'" data-a="dv" data-i="'+i+'">'+e(x)+'</button>')}));
+ h+='<div class="bot"><div class="card"><div class="ch"><span>Tasks to be performed</span><em>'+(TOT-p[1])+'/'+TOT+' done</em></div><div class="trk"><i style="width:'+p[0]+'%"></i><svg viewBox="0 0 32 30" style="left:'+Math.max(4,Math.min(96,p[0]))+'%" aria-hidden="true"><path d="M2 15 8 12 12 3h4l-2 9 10-3 6 6-6 6-10-3 2 9h-4L8 18z"/></svg></div><div class="mut">Progress: <b style="color:var(--wn)">'+p[0]+'%</b></div><div class="row" style="margin-top:6px"><span>Current state: <b>'+e(ST[c][1])+'</b></span><button class="sm" data-a="dv" data-i="'+c+'">View all</button></div></div>'
+ +'<div class="card"><div class="ch"><span>Action items</span><span class="mut">'+pend.length+' open</span></div><div class="pills">'+(pend.slice(0,8).join("")||'<span class="mut">All tasks are done.</span>')+'</div></div></div>';return h}
+function vEdit(o){var sp=PR.filter(p=>p.role!=="cfd"),pg=PROGS.indexOf(o.eng)<0?[o.eng].concat(PROGS):PROGS,fl=[["en_n","Customer name",o.n],["en_i","ICAO",o.icao],["en_c","Country",o.ctry],["en_a","Number of aircraft",o.ac,"number"],["en_o","Contract type",o.con],["en_t","Airframer or Lessor",o.tt],["en_f","Collins Flight Sens",o.cfs],["en_k","Kickoff date",iso(o.start),"date"],["en_e","TOT",iso(o.eis),"date"]];
+ return '<div class="card"><div class="ch"><span>Edit customer</span></div><div class="fm">'+fl.map(f=>'<label>'+f[1]+'<input id="'+f[0]+'" type="'+(f[3]||"text")+'" value="'+e(f[2])+'"></label>').join("")+'<label>Engine program<select id="en_pg">'+pg.map(x=>'<option'+(o.eng===x?' selected':'')+'>'+e(x)+'</option>').join("")+'</select></label><label>Specialist<select id="en_sp"><option value="">Not assigned</option>'+sp.map(p=>'<option value="'+p.id+'"'+(o.sp===p.id?' selected':'')+'>'+e(p.name||p.email)+'</option>').join("")+'</select></label></div><div style="margin-top:12px;display:flex;gap:8px"><button class="btn" data-a="esave">Save changes</button><button class="sm" data-a="ecancel" style="padding:10px 16px">Cancel</button></div></div>'}
+async function setMd(o,i,v){var code=ST[i][0],cur0=await readMd(o.id);cur0[code]=v;var r=await writeMd(o.id,cur0);if(r.error){msg="Could not save: "+r.error.message;return render()}Object.keys(cur0).forEach(c=>{o.md[c]=pd(cur0[c])});msg="Milestone date saved";render()}
+async function resetMd(o,i){var code=ST[i][0],cur0=await readMd(o.id);delete cur0[code];var r=await writeMd(o.id,cur0);if(r.error){msg="Could not reset: "+r.error.message;return render()}delete o.md[code];msg="Date reset to default";render()}
+async function saveEdit(){var o=O[cid],g=id=>document.getElementById(id).value.trim(),sp=g("en_sp"),s=PR.find(p=>p.id===sp);if(!g("en_n")){msg="Customer name cannot be empty";return render()}
+ var f={name:g("en_n"),icao:g("en_i"),country:g("en_c"),program:g("en_pg"),aircraft:+g("en_a")||0,contract_type:g("en_o"),airframer_or_lessor:g("en_t"),collins_flight_sens:g("en_f"),start_date:g("en_k")||iso(o.start),eis_date:g("en_e")||null,specialist_id:sp||null,fsr_name:s?(s.name||s.email):""};
+ var r=await sb.from("customers").update(f).eq("id",o.id);if(r.error){msg="Could not save: "+r.error.message;return render()}
+ Object.assign(o,{n:f.name,icao:f.icao,ctry:f.country,eng:f.program,ac:f.aircraft,con:f.contract_type,tt:f.airframer_or_lessor,cfs:f.collins_flight_sens,start:pd(f.start_date),eis:pd(f.eis_date),sp:f.specialist_id,fsr:f.fsr_name});editing=false;msg="Customer updated";render()}
+function filt(){return vis().filter(o=>{var s=(o.n+o.icao+o.ctry+o.eng+o.fsr).toLowerCase();if(q&&s.indexOf(q.toLowerCase())<0)return false;if(fp&&o.eng!==fp)return false;var late=ST.some((_,i)=>stt(o,i)[0]==="Delayed");if(fs==="late"&&!late)return false;if(fs==="ok"&&late)return false;return true})}
+function xlRows(){var H=["Customer","Program","ICAO","Country","Aircraft","Contract type","Airframer or Lessor","Collins Flight Sens","CFD","FSR","Kickoff date","EIS date","Lead time (months)","Progress %","Tasks remaining"];ST.forEach(s=>{H.push(s[0]+" date");H.push(s[0]+" status")});
+ var rows=[H];filt().forEach(o=>{var p=pc(o),r=[o.n,o.eng,o.icao,o.ctry,o.ac,o.con,o.tt,o.cfs,nice(o.cfd),nice(o.fsr),fm(o.start),o.eis?fm(o.eis):"",o.eis?(o.eis.getFullYear()-o.start.getFullYear())*12+o.eis.getMonth()-o.start.getMonth():"",p[0],p[1]];ST.forEach((_,i)=>{r.push(fm(dt(o,i)));r.push(stt(o,i)[1])});rows.push(r)});return rows}
+function xlTasks(){var rows=[["Customer","Milestone","Task","Done"]];filt().forEach(o=>ST.forEach((s,i)=>s[2].forEach((t,j)=>rows.push([o.n,s[0]+": "+s[1],t,o.t[i][j]?"Yes":"No"]))));return rows}
+function exportXl(){var a=xlRows(),b=xlTasks(),fn="EIS_Overview_"+iso(new Date());
+ if(typeof XLSX!=="undefined"){var wb=XLSX.utils.book_new(),w1=XLSX.utils.aoa_to_sheet(a),w2=XLSX.utils.aoa_to_sheet(b);w1["!cols"]=a[0].map((h,i)=>({wch:i===0?28:14}));w2["!cols"]=[{wch:28},{wch:28},{wch:60},{wch:8}];XLSX.utils.book_append_sheet(wb,w1,"EIS Overview");XLSX.utils.book_append_sheet(wb,w2,"Tasks");XLSX.writeFile(wb,fn+".xlsx");msg="Excel file downloaded"}
+ else{var csv="\ufeff"+a.map(r=>r.map(c=>'"'+String(c==null?"":c).replace(/"/g,'""')+'"').join(",")).join("\r\n"),l=document.createElement("a");l.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"}));l.download=fn+".csv";document.body.appendChild(l);l.click();l.remove();msg="The Excel tool could not load, so a CSV file was downloaded instead"}
+ render()}
+function remGroups(){var g={},t0=new Date();t0=new Date(t0.getFullYear(),t0.getMonth(),t0.getDate());O.forEach(o=>ST.forEach((s,i)=>{var st=stt(o,i)[0];if(st==="Complete"||st==="Pp")return;var dd=Math.round((dt(o,i)-t0)/864e5);if(dd<=14)(g[o.sp||"none"]=g[o.sp||"none"]||[]).push({o:o,i:i,dd:dd})}));return g}
+function remText(k){var L=(remGroups()[k]||[]).slice().sort((a,b)=>a.dd-b.dd),p=PR.find(x=>x.id===k),nm=p?nice(p.name||p.email):"team";
+ var lines=L.slice(0,15).map(x=>"- "+x.o.n+" | "+ST[x.i][0]+" "+ST[x.i][1]+" | due "+fm(dt(x.o,x.i))+(x.dd<0?" (overdue by "+(-x.dd)+" days)":x.dd===0?" (due today)":" (due in "+x.dd+" days)"));
+ return{email:p?p.email:"",sub:"EIS reminder: "+L.length+" milestone"+(L.length===1?"":"s")+" need attention",body:"Hi "+nm+",\n\nThese EIS milestones are overdue or due within 14 days:\n\n"+lines.join("\n")+(L.length>15?"\n...and "+(L.length-15)+" more":"")+"\n\nPlease update progress in the EIS Work Flow Tool: "+location.origin+location.pathname+"\n\nThank you,\n"+nice(prof.name||prof.email)}}
+function vRem(){var g=remGroups(),ks=Object.keys(g),cf=role==="cfd";
+ if(!ks.length)return '<div class="card">Nothing is overdue or due within the next 14 days.</div>';
+ return '<div class="card mut">Milestones that are overdue or due within the next 14 days'+(cf?', grouped by specialist. Use Email or Teams to send the reminder, or Copy to paste it anywhere.':'.')+'</div>'+ks.map(k=>{var L=g[k].slice().sort((a,b)=>a.dd-b.dd),p=PR.find(x=>x.id===k),od=L.filter(x=>x.dd<0).length;
+  return '<div class="card"><div class="row" style="flex-wrap:wrap;margin-bottom:6px"><b>'+e(p?nice(p.name||p.email):"Unassigned customers")+'</b><span class="mut">'+L.length+' item'+(L.length===1?'':'s')+', '+od+' overdue</span>'+(cf&&p?'<span><button class="sm" data-a="remmail" data-k="'+k+'">Email</button> <button class="sm" data-a="remteams" data-k="'+k+'">Teams</button> <button class="sm" data-a="remcopy" data-k="'+k+'">Copy</button></span>':'')+'</div>'+L.map(x=>'<div class="fl row" role="button" tabindex="0" data-a="o" data-i="'+O.indexOf(x.o)+'" data-s="'+x.i+'" style="cursor:pointer"><span>'+e(x.o.n)+' - '+ST[x.i][0]+' '+e(ST[x.i][1])+'</span><span class="tag '+(x.dd<0?'Delayed':'Risk')+'">'+(x.dd<0?'Overdue '+(-x.dd)+' d':x.dd===0?'Due today':'Due in '+x.dd+' d')+'</span></div>').join("")+'</div>'}).join("")}
+function rowsH(){var L=filt();
+ return L.length?L.map(o=>{var c=cur(o),ix=O.indexOf(o),lm=o.eis?(o.eis.getFullYear()-o.start.getFullYear())*12+o.eis.getMonth()-o.start.getMonth()+" Months":"TBD";
+ return '<div class="or" role="button" tabindex="0" data-a="oc" data-i="'+ix+'"><div><b>'+e(o.eng)+' : '+e(o.n)+'</b><div class="mt"><span>'+(e(o.icao)||"TBD")+'</span><span>&#9992; '+o.ac+'</span><span>FSR: '+(e(o.fsr)||"TBD")+'</span><span style="text-decoration:underline;color:var(--acc)">'+e(o.cfd)+'</span></div></div><div class="tl">'+ST.map((_,i)=>{var st=stt(o,i)[0],k=st==="Complete"?"done":i===c?"cur":"todo";if(st==="Delayed")k+=" late";return '<div class="tc '+k+'" title="'+e(ST[i][1])+'"><i></i>'+fm(dt(o,i))+'</div>'}).join("")+'</div><div><span class="lt">'+lm+'</span></div><button class="sm" data-a="oc" data-i="'+ix+'" aria-label="Open '+e(o.n)+'">&#8942;</button></div>'}).join(""):'<div class="mut" style="padding:14px">'+(O.length?'No customers match your search or filters.':(role==="cfd"?'No customers yet. Use Add customer in the left menu.':'No customers are assigned to you yet.'))+'</div>'}
+function vOut(){return '<div class="card"><div class="ch"><span>EIS Overview</span></div><div class="tb"><input type="search" data-a="q" placeholder="Search customer, ICAO, country" aria-label="Search" value="'+e(q)+'"><select data-a="fprog" aria-label="Program"><option value="">All programs</option>'+PROGS.map(x=>'<option'+(fp===x?' selected':'')+'>'+x+'</option>').join("")+'</select><select data-a="fstat" aria-label="Status"><option value="">All statuses</option><option value="late"'+(fs==="late"?' selected':'')+'>Has delayed milestones</option><option value="ok"'+(fs==="ok"?' selected':'')+'>No delays</option></select><button class="sm" style="padding:8px 14px" data-a="xl">Export to Excel</button></div><div class="ol"><div class="olw"><div class="oh2"><span>Customer name</span><div class="tl">'+ST.map(s=>'<div class="tc h">'+s[0]+'<small>'+e(s[1])+'</small></div>').join("")+'</div><span>Onboarding lead time</span><span></span></div><div id="rows">'+rowsH()+'</div></div></div><div class="mut" style="margin-top:10px">Yellow marks the current milestone, green is complete, a red ring is delayed, and a dashed line is still ahead. Select a customer to open its tasks and documents.</div></div>'}
+function docs(o,i){var st=stt(o,i);return '<div class="card"><div class="ch"><span>Milestone documents</span><span class="tag '+st[0]+'">'+st[1]+'</span></div>'+(o.p[i].length?o.p[i].map((f,k)=>'<div class="fl row"><span>'+e(f.f)+'<br><span class="mut">'+f.s+'</span></span><span><button class="sm" data-a="opn" data-k="'+k+'">Open</button> '+(role==="cfd"&&f.s==="Uploaded"?'<button class="sm" data-a="ver" data-k="'+k+'">Verify</button> <button class="sm" data-a="rej" data-k="'+k+'">Reject</button> ':'')+(role==="cust"?'':'<button class="sm" data-a="del" data-k="'+k+'">Remove</button>')+'</span></div>').join(""):'<div class="fl mut">No documents attached yet</div>')+(role==="cust"?'':'<label class="sm" style="display:inline-block;margin-top:10px;cursor:pointer">Attach document<input type="file" hidden data-a="file"></label>')+'<div class="mut" style="margin-top:8px">A milestone is Complete only when all tasks are done and a CFD has verified a document.</div></div>'}
+function vTasks(o){var s=ST[sel],n=o.t[sel].filter(Boolean).length,st=stt(o,sel);
+ var h='<div class="card"><div class="row"><b>'+e(o.n)+'</b>'+modelSel(o,1)+'<select data-a="msel" aria-label="Milestone">'+ST.map((x,i)=>'<option value="'+i+'"'+(i===sel?' selected':'')+'>'+x[0]+': '+e(x[1])+'</option>').join("")+'</select><span class="tag '+st[0]+'">'+st[1]+'</span></div><div class="mut" style="margin-top:8px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">Due date <input type="date" data-a="mdate" value="'+iso(dt(o,sel))+'" aria-label="Milestone due date"'+(role==="cust"?' disabled':'')+'>'+(o.md[s[0]]&&role!=="cust"?'<button class="sm" data-a="mreset">Reset to default</button>':'')+'<span>'+n+' of '+s[2].length+' tasks done</span>'+'</div><div class="bar"><i style="width:'+Math.round(n/s[2].length*100)+'%"></i></div>';
+ s[2].forEach((t,j)=>{h+='<label class="tk'+(o.t[sel][j]?' d':'')+'"><input type="checkbox" data-a="chk" data-j="'+j+'"'+(o.t[sel][j]?' checked':'')+(role==="cust"?' disabled':'')+'><span>'+s[0]+'.'+(j+1)+' '+t+'</span></label>'});
+ return h+'</div>'+docs(o,sel)}
+function vIns(){var L=vis(),h='<div class="card" style="overflow-x:auto"><div class="ch"><span>Readiness heatmap</span></div><table><tr><th></th>'+ST.map(s=>'<th>'+s[0]+'</th>').join("")+'</tr>';
+ L.forEach(o=>{h+='<tr><td class="n">'+e(o.n)+'</td>'+ST.map((_,i)=>{var s=stt(o,i);return '<td><div class="hc tag '+s[0]+'" role="button" tabindex="0" title="'+s[1]+'" data-a="o" data-i="'+O.indexOf(o)+'" data-s="'+i+'">'+o.t[i].filter(Boolean).length+'/'+o.t[i].length+'</div></td>'}).join("")+'</tr>'});
+ h+='</table></div><div class="card"><div class="ch"><span>Readiness by customer</span></div>'+L.slice().sort((a,b)=>pc(a)[0]-pc(b)[0]).map(o=>{var p=pc(o)[0];return '<div class="row"><span>'+e(o.n)+'</span><b>'+p+'%</b></div><div class="bar"><i style="width:'+p+'%"></i></div>'}).join("")+'</div>';return h}
+function vAdd(){var sp=PR.filter(p=>p.role!=="cfd");
+ return '<div class="card"><div class="ch"><span>Add customer</span></div><div class="fm">'+[["fn","Customer name"],["fi","ICAO"],["fc","Country"],["fa","Number of aircraft","number"],["fo","Contract type"],["ft","Airframer or Lessor"],["fs2","Collins Flight Sens"],["fk","Kickoff date","date"],["fe","TOT","date"]].map(f=>'<label>'+f[1]+'<input id="'+f[0]+'" type="'+(f[2]||"text")+'"></label>').join("")+'<label>Engine program<select id="fpg">'+PROGS.map(x=>'<option>'+x+'</option>').join("")+'</select></label><label>Specialist<select id="fsp"><option value="">Not assigned</option>'+sp.map(p=>'<option value="'+p.id+'">'+e(p.name||p.email)+'</option>').join("")+'</select></label></div><button class="btn" style="margin-top:12px" data-a="addc">Save customer</button></div>'
+ +'<div class="card"><div class="ch"><span>Import from Excel</span></div><p class="mut">Copy rows from Excel and paste them below, one customer per row, with these columns in this order: customer name, ICAO, country, engine program, number of aircraft, contract type, airframer or lessor, Collins Flight Sens, TOT, kickoff date, specialist email. Write dates as YYYY-MM-DD, for example 2027-04-20.</p><textarea id="imp" rows="6" aria-label="Pasted rows"></textarea><button class="btn" style="margin-top:10px" data-a="imp">Import customers</button></div>'}
+function render(){var a=document.getElementById("app"),y=window.scrollY,sc=document.querySelector(".mss,.stp"),sx=sc?sc.scrollLeft:0;
+ if(!role){a.innerHTML='<div class="login"><h1>EIS Work Flow Tool</h1><p class="mut">Sign in with your work email</p><input id="em" type="email" value="'+e(lem)+'" placeholder="Email" aria-label="Email" autocomplete="username"><input id="pw" type="password" placeholder="Password" aria-label="Password" autocomplete="current-password"><div class="err" role="alert">'+e(lerr)+'</div><button class="btn" data-a="in"'+(busy?' disabled':'')+'>'+(busy?'Signing in...':'Sign in')+'</button><p class="mut">Access is by invitation. Ask your Customer Fleet Director for an account.</p></div>';return}
+ var o=me(),cf=role==="cfd",nv=[["dash","Dashboard","&#9638;"],["tasks","Tasks","&#9745;"],["rc","Report Card","&#9636;"],["rem","Reminders","&#9993;"]];if(role==="cust")nv=nv.filter(x=>x[0]!=="rem");if(cf){nv.push(["add","Add customer","&#43;"]);nv.push(["ins","Insights","&#9684;"])}
+ if(role!=="cfd"&&(view==="ins"||view==="add"||view==="addm"))view="dash";if(role==="cust"&&view==="rem")view="dash";var ttl={dash:"Dashboard",tasks:"Tasks",tdet:"Tasks",ins:"Insights",add:"Add customer",rc:"Report Card",rem:"Reminders",addm:"Add engine model"}[view],b;
+ if(view==="tasks")b=vOut();else if(view==="add"&&cf)b=vAdd();else if(view==="addm"&&cf&&o)b=vAddM(o);else if(!o)b='<div class="card">'+(cf?'No customers yet. Use Add customer in the left menu.':'No customers are assigned to you yet.')+'</div>';
+ else b=view==="dash"?vDash(o):view==="tdet"?'<button class="sm" data-a="v" data-v="tasks" style="margin-bottom:10px">Back to EIS Overview</button>'+vTasks(o):view==="rc"?vRc(o):view==="rem"?vRem():vIns();
+ a.innerHTML='<div class="app'+(role==="cust"?" ro":"")+'"><aside><div class="brand">P&amp;WA</div>'+nv.map(x=>'<button class="ni'+(view===x[0]||(view==="tdet"&&x[0]==="tasks")?' on':'')+'" data-a="v" data-v="'+x[0]+'"><i aria-hidden="true">'+x[2]+'</i>'+x[1]+'</button>').join("")+'</aside><main><div class="top"><div><small>EIS Work Flow Tool</small><h1>'+ttl+'</h1></div><div class="usr"><div><b>'+e(prof.name||prof.email)+'</b><span>'+(cf?"Customer Fleet Director":role==="cust"?"Airline customer (view only)":"EIS Specialist")+'</span></div><div class="av">'+e((prof.name||prof.email||"?").slice(0,2).toUpperCase())+'</div><button class="sm" data-a="out">Log out</button></div></div>'+b+'</main></div>'+(msg?'<div class="toast" role="status">'+e(msg)+'</div>':'');
+ window.scrollTo(0,y);var c2=document.querySelector(".mss,.stp");if(c2)c2.scrollLeft=sx;
+ if(msg){var m=msg;setTimeout(()=>{if(msg===m){msg="";var t=document.querySelector(".toast");if(t)t.remove()}},2500)}}
+function act(x){var a=x.dataset.a,v=x.dataset.v,o=O[cid],i=+x.dataset.i,k=+x.dataset.k;
+ if(a==="in")return login();if(a==="out")return logout();
+ if(role==="cust"&&/^(rcq|rcedit|rcsave|edit|esave|addc|imp|ver|rej|del|mreset|remmail|remteams|remcopy|addmodel|addmsave)$/.test(a))return;if(a==="v"||a==="oc"||a==="o"){editing=false;rcEdit=false}
+ if(a==="v")view=v;else if(a==="sel")sel=i;else if(a==="dv"){sel=i;view="tdet"}
+ else if(a==="flt")flt=flt===v?"":v;
+ else if(a==="o"){cid=i;sel=+x.dataset.s;view="tdet"}
+ else if(a==="oc"){cid=i;sel=cur(O[cid]);flt="";view="tdet"}
+ else if(a==="ver")return setStatus(o,sel,k,"Verified");else if(a==="rej")return setStatus(o,sel,k,"Rejected");
+ else if(a==="del")return delDoc(o,sel,k);else if(a==="opn")return openDoc(o,sel,k);
+ else if(a==="addc")return addCust();else if(a==="imp")return importC();
+ else if(a==="mreset")return resetMd(o,sel);
+ else if(a==="addmodel"){if(role==="cfd")view="addm"}else if(a==="addmcancel")view="dash";else if(a==="addmsave")return addModel();
+ else if(a==="xl")return exportXl();
+ else if(a==="remmail"){var m=remText(x.dataset.k);location.href="mailto:"+m.email+"?subject="+encodeURIComponent(m.sub)+"&body="+encodeURIComponent(m.body);return}
+ else if(a==="remteams"){var m2=remText(x.dataset.k);window.open("https://teams.microsoft.com/l/chat/0/0?users="+encodeURIComponent(m2.email)+"&message="+encodeURIComponent(m2.sub+"\n\n"+m2.body),"_blank");return}
+ else if(a==="remcopy"){var m3=remText(x.dataset.k);navigator.clipboard.writeText("Subject: "+m3.sub+"\n\n"+m3.body).then(()=>{msg="Reminder copied";render()},()=>{msg="Could not copy";render()});return}
+ else if(a==="rcq"){var f=x.dataset.f;rcEdit=true;rcLogo=(RC[O[cid].id]||{}).logo||"";render();var t=document.getElementById(f);if(t){t.focus();if(t.setSelectionRange&&t.value)t.setSelectionRange(t.value.length,t.value.length)}return}
+ else if(a==="rcedit"){rcEdit=true;rcLogo=(RC[O[cid].id]||{}).logo||""}else if(a==="rccancel")rcEdit=false;else if(a==="rcsave")return saveRc();else if(a==="rcdl")return dlRc();else if(a==="rclogoclear"){rcLogo="";var lb=document.getElementById("lgbox");if(lb)lb.innerHTML=lgHtml();return}
+ else if(a==="edit")editing=true;else if(a==="ecancel")editing=false;else if(a==="esave")return saveEdit();
+ else return;render()}
+document.addEventListener("click",ev=>{var x=ev.target.closest("[data-a]");if(!x||x.tagName==="SELECT"||x.tagName==="INPUT"||x.tagName==="TEXTAREA")return;act(x)});
+document.addEventListener("keydown",ev=>{if(ev.key==="Enter"&&ev.target.id==="pw"){login();return}if((ev.key==="Enter"||ev.key===" ")&&ev.target.getAttribute&&ev.target.getAttribute("role")==="button"){ev.preventDefault();act(ev.target)}});
+document.addEventListener("change",ev=>{var x=ev.target,a=x.dataset.a,o=O[cid];
+ if(role==="cust"&&/^(chk|file|prog|asg|sd|ed|mdate|rclogo)$/.test(a))return;
+ if(a==="rclogo"&&x.files[0])return setLogo(x.files[0]);
+ if(a==="mdate"&&x.value)return setMd(o,sel,x.value);
+ if(a==="chk")return tog(o,sel,+x.dataset.j,x.checked);
+ if(a==="file"&&x.files[0])return upl(o,sel,x.files[0]);
+ if(a==="prog")return upd(o,{program:x.value},{eng:x.value});
+ if(a==="asg"){var s=PR.find(p=>p.id===x.value);return upd(o,{specialist_id:x.value||null,fsr_name:s?(s.name||s.email):""},{sp:x.value||null,fsr:s?(s.name||s.email):""})}
+ if(a==="sd"&&x.value)return upd(o,{start_date:x.value},{start:pd(x.value)});
+ if(a==="ed")return upd(o,{eis_date:x.value||null},{eis:pd(x.value)});
+ if(a==="cust"||a==="model"){editing=false;rcEdit=false;cid=+x.value;sel=cur(O[cid]);flt=""}else if(a==="msel")sel=+x.value;else if(a==="fprog")fp=x.value;else if(a==="fstat")fs=x.value;else return;render()});
+document.addEventListener("input",ev=>{var x=ev.target;if(x.dataset&&x.dataset.a==="q"){q=x.value;var r=document.getElementById("rows");if(r)r.innerHTML=rowsH()}});
+boot();
+</script>
+</body>
+</html>
