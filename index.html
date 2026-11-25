@@ -182,24 +182,25 @@ async function loadAll(){
  O=r[1].data.map(c=>({md:{},id:c.id,n:c.name,eng:c.program||PROGS[0],icao:c.icao||"",ctry:c.country||"",ac:c.aircraft||0,con:c.contract_type||"",tt:c.airframer_or_lessor||"",cfs:c.collins_flight_sens||"",fsr:c.fsr_name||"",cfd:c.cfd_name||"",sp:c.specialist_id,start:pd(c.start_date)||new Date(),eis:pd(c.eis_date),
   t:ST.map((s,i)=>s[2].map((_,j)=>!!DM[c.id+":"+(TID[s[0]]||[])[j]])),
   p:ST.map(s=>r[3].data.filter(d=>d.customer_id===c.id&&d.milestone_code===s[0]).map(d=>({id:d.id,f:d.file_name,s:d.status,path:d.file_path})))}));
- await Promise.all(O.map(async o=>{o.sub=await readJ(o.id,"_subtasks.json");o.ref=await readJ(o.id,"_refdocs.json");var j=await readMd(o.id);Object.keys(j).forEach(c=>{if(c==="_status")o.status=j[c];else if(c==="_region")o.region=j[c];else o.md[c]=pd(j[c])})}))}
+ await Promise.all(O.map(async o=>{o.sub=await readJ(o.id,"_subtasks.json");var j=await readMd(o.id);Object.keys(j).forEach(c=>{if(c==="_status")o.status=j[c];else if(c==="_region")o.region=j[c];else o.md[c]=pd(j[c])})}))}
 var SUB={"M3_1":["3.2.1 Customer provides letter of Intent (LOI) to Engine Shop","3.2.2 Regulatory Approvals","3.2.3 Customer Quality approval","3.2.4 Confirm that Customer has Completed Setup for agreed upon MRO Shops"]},subOpen={};
 async function readJ(id,name){var d=await sb.storage.from("documents").download(id+"/"+name);if(d.error)return{};try{return JSON.parse(await d.data.text())||{}}catch(x){return{}}}
 function subVals(o,i,j){var key=ST[i][0]+"_"+j,rec=(o.sub||{})[key];return SUB[key].map((_,k)=>rec&&typeof rec[k]==="boolean"?rec[k]:!!o.t[i][j])}
 async function setSub(o,i,j,k,v){var key=ST[i][0]+"_"+j,cur=await readJ(o.id,"_subtasks.json"),b=(cur[key]||subVals(o,i,j)).slice();b[k]=v;cur[key]=b;
  var r=await writeJson(o.id,"_subtasks.json",cur);if(r.error){msg="Could not save: "+r.error.message;return render()}
  o.sub=cur;var all=SUB[key].every((_,n)=>b[n]===true);if(all!==o.t[i][j])await tog(o,i,j,all);else render()}
-var REFS=["PW Overview","Customer Focus Team","RSPL","Initial Provisioning Overview","Fleet Support","Entry Into Service Readiness","MRO Network","Engine Change","ADEM Support"],refEd=false,refK=0;
-function vRef(o){var st=role!=="cust",ed=st&&refEd,h='<div class="card"><div class="ch"><span>Reference documents</span>'+(st?'<button class="sm" data-a="rfed">'+(ed?'Done':'Manage')+'</button>':'')+'</div><div class="pills">';
- REFS.forEach((l,k)=>{var d=(o.ref||{})["R"+k],b=(t,a)=>' <button class="sm" data-a="'+a+'" data-k="'+k+'">'+t+'</button>';
+var REFS=["PW Overview","Customer Focus Team","Initial Provisioning Orders","Initial Provisioning Overview","Fleet Support","Entry Into Service Readiness","MRO Network","Engine Change","ADEM Support"],refEd=false,refK=0,REF=null,REFL=false,NIL="00000000-0000-0000-0000-000000000000";
+async function loadRef(){REF=await readJ(NIL,"_refdocs.json");render()}
+function vRef(o){if(REF===null){if(!REFL){REFL=true;loadRef()}return '<div class="card mut">Loading reference documents...</div>'}var st=role!=="cust",ed=st&&refEd,h='<div class="card"><div class="ch"><span>Reference documents</span>'+(st?'<button class="sm" data-a="rfed">'+(ed?'Done':'Manage')+'</button>':'')+'</div><div class="pills">';
+ REFS.forEach((l,k)=>{var d=(REF||{})["R"+k],b=(t,a)=>' <button class="sm" data-a="'+a+'" data-k="'+k+'">'+t+'</button>';
   if(ed)h+='<span class="pill ref'+(d?'':' no')+'" style="display:inline-flex;gap:8px;align-items:center;max-width:none;overflow:visible">'+e(l)+(d?b("Replace","rfup")+b("Remove","rfdel"):b("Upload","rfup"))+'</span>';
   else h+='<button class="pill ref'+(d?'':' no')+'" data-a="rfopn" data-k="'+k+'" title="'+e(d?d.name:"No document attached yet")+'">'+e(l)+'</button>'});
  return h+'</div>'+(ed?'<input type="file" id="rffile" hidden data-a="rffile">':'')+'</div>'}
-async function rfSave(o,cur,old,ok){var r=await writeJson(o.id,"_refdocs.json",cur);if(r.error){msg="Could not save: "+r.error.message;return render()}if(old)await sb.storage.from("documents").remove([old.path]);o.ref=cur;msg=ok;render()}
-async function rfUp(o,k,f){if(role==="cust"||!f)return;msg="Uploading...";render();var path=o.id+"/_ref/R"+k+"_"+Date.now()+"_"+f.name.replace(/[^\w.\-]/g,"_"),u=await sb.storage.from("documents").upload(path,f);if(u.error){msg="Upload failed: "+u.error.message;return render()}
- var cur=await readJ(o.id,"_refdocs.json"),old=cur["R"+k];cur["R"+k]={name:f.name,path:path};await rfSave(o,cur,old,"Document attached")}
-async function rfDel(o,k){if(role==="cust"||!confirm("Remove this document?"))return;var cur=await readJ(o.id,"_refdocs.json"),old=cur["R"+k];delete cur["R"+k];await rfSave(o,cur,old,"Document removed")}
-async function rfOpen(o,k){var d=(o.ref||{})["R"+k];if(!d){msg="No document attached yet";return render()}var w=window.open("","_blank"),r=await sb.storage.from("documents").createSignedUrl(d.path,120);if(r.error){if(w)w.close();msg="Could not open: "+r.error.message;return render()}if(w)w.location=r.data.signedUrl}
+async function rfSave(o,cur,old,ok){var r=await writeJson(NIL,"_refdocs.json",cur);if(r.error){msg="Could not save: "+r.error.message;return render()}if(old)await sb.storage.from("documents").remove([old.path]);REF=cur;msg=ok;render()}
+async function rfUp(o,k,f){if(role==="cust"||!f)return;msg="Uploading...";render();var path=NIL+"/_ref/R"+k+"_"+Date.now()+"_"+f.name.replace(/[^\w.\-]/g,"_"),u=await sb.storage.from("documents").upload(path,f);if(u.error){msg="Upload failed: "+u.error.message;return render()}
+ var cur=await readJ(NIL,"_refdocs.json"),old=cur["R"+k];cur["R"+k]={name:f.name,path:path};await rfSave(o,cur,old,"Document attached")}
+async function rfDel(o,k){if(role==="cust"||!confirm("Remove this document?"))return;var cur=await readJ(NIL,"_refdocs.json"),old=cur["R"+k];delete cur["R"+k];await rfSave(o,cur,old,"Document removed")}
+async function rfOpen(o,k){var d=(REF||{})["R"+k];if(!d){msg="No document attached yet";return render()}var w=window.open("","_blank"),r=await sb.storage.from("documents").createSignedUrl(d.path,120);if(r.error){if(w)w.close();msg="Could not open: "+r.error.message;return render()}if(w)w.location=r.data.signedUrl}
 async function readMd(id){var d=await sb.storage.from("documents").download(id+"/_dates.json");if(d.error)return{};try{return JSON.parse(await d.data.text())}catch(x){return{}}}
 async function writeMd(id,obj){return sb.storage.from("documents").upload(id+"/_dates.json",new Blob([JSON.stringify(obj)],{type:"application/json"}),{upsert:true,contentType:"application/json"})}
 var RC={},rcEdit=false,rcLogo="",TD={title:"EIS Customer Readiness: Welcome Report Card",dl:"Most critical EIS deliverables",rk:"Risk(s)"};
@@ -271,7 +272,7 @@ async function enter(u){uid=u.id;busy=true;render();var p=await sb.from("profile
  prof=p.data;role=prof.role==="cfd"?"cfd":prof.role==="customer"?"cust":"spec";
  try{await loadAll()}catch(x){lerr=String(x.message||x);busy=false;await sb.auth.signOut();role=null;return render()}
  busy=false;view="dash";var o=me();if(o)sel=cur(o);render()}
-async function logout(){await sb.auth.signOut();role=null;prof=null;O=[];RC={};rcEdit=false;CT=null;CTL=false;CHAT={};chatOpen=false;calEd=false;CE={};dstat="";GL=null;GLL=false;render()}
+async function logout(){await sb.auth.signOut();role=null;prof=null;O=[];RC={};rcEdit=false;CT=null;CTL=false;CHAT={};chatOpen=false;calEd=false;CE={};dstat="";GL=null;GLL=false;REF=null;REFL=false;render()}
 async function tog(o,i,j,v){o.t[i][j]=v;var r=await sb.from("customer_tasks").update({done:v,done_by:uid,done_at:v?new Date().toISOString():null}).eq("customer_id",o.id).eq("task_id",TID[ST[i][0]][j]);if(r.error){o.t[i][j]=!v;msg="Could not save: "+r.error.message}else if(v&&stt(o,i)[0]==="Complete")await freezeNow(o);render()}
 async function upl(o,i,file){var code=ST[i][0],path=o.id+"/"+code+"/"+Date.now()+"_"+file.name.replace(/[^\w.\-]/g,"_");
  msg="Uploading...";render();var u=await sb.storage.from("documents").upload(path,file);if(u.error){msg="Upload failed: "+u.error.message;return render()}
@@ -414,19 +415,20 @@ function exportCal(){if(typeof XLSX==="undefined"){msg="The Excel tool could not
  calFilt().forEach(o=>{var ct=(CT||{})[o.id]||{};rows.push([dt(o,7).getFullYear(),o.eng+" : "+o.n,o.icao,o.ac].concat(ST.slice(0,8).map((_,i)=>fm(dt(o,i))),[o.eis?fm(o.eis):"TBD",aar(o)?fm(aar(o)):"TBD"],CF.map(f=>ct[f[0]]||""),[nice(o.cfd),nice(o.fsr),ct.cyient||""]))});
  var wb=XLSX.utils.book_new(),ws=XLSX.utils.aoa_to_sheet(rows);ws["!cols"]=rows[0].map((h,i)=>({wch:i===1?36:i===0?8:i>11?30:16}));XLSX.utils.book_append_sheet(wb,ws,"EIS Customer Calendar");XLSX.writeFile(wb,"EIS_Customer_Calendar_"+iso(new Date())+".xlsx");msg="Calendar downloaded";render()}
 
+var GP="00000000-0000-0000-0000-000000000000/_guides";
 function gnm(n){return n.replace(/^\d+_/,"")}
 function gsz(b){return !b?"":b<1048576?Math.max(1,Math.round(b/1024))+" KB":(b/1048576).toFixed(1)+" MB"}
-async function loadGuides(){var r=await sb.storage.from("documents").list("_guides",{limit:500});GLE=r.error?r.error.message:"";GL=(r.data||[]).filter(x=>x.name&&x.name[0]!==".").sort((a,b)=>parseInt(b.name)-parseInt(a.name));render()}
+async function loadGuides(){var r=await sb.storage.from("documents").list(GP,{limit:500});GLE=r.error?r.error.message:"";GL=(r.data||[]).filter(x=>x.name&&x.name[0]!==".").sort((a,b)=>parseInt(b.name)-parseInt(a.name));render()}
 function vGuide(){var cf=role==="cfd";if(GL===null){if(!GLL){GLL=true;loadGuides()}return '<div class="card mut">Loading guides...</div>'}
  return '<div class="card"><div class="ch"><span>Guides and documents</span>'+(cf?'<label class="btn" style="padding:8px 16px;text-transform:none;cursor:pointer">Upload guide<input type="file" multiple hidden data-a="gfile"></label>':'')+'</div>'+(GLE?'<div class="err" role="alert">Could not load guides: '+e(GLE)+'</div>':'')
  +(GL.length?GL.map(x=>{var n=gnm(x.name),d=new Date(parseInt(x.name)),sz=x.metadata&&x.metadata.size?gsz(x.metadata.size):"";return '<div class="fl row"><span>'+e(n)+'<br><span class="mut">'+(isNaN(d)?"":"Added "+fm(d))+(sz?" \u00b7 "+sz:"")+'</span></span><span><button class="sm" data-a="gopn" data-n="'+e(x.name)+'">View</button> <button class="sm" data-a="gdl" data-n="'+e(x.name)+'">Download</button>'+(cf?' <button class="sm" data-a="gdel" data-n="'+e(x.name)+'">Remove</button>':'')+'</span></div>'}).join(""):'<div class="fl mut">No guides uploaded yet.'+(cf?' Use Upload guide to add one.':'')+'</div>')+'</div>'}
-async function gOpen(n,dl){var w=dl?null:window.open("","_blank"),r=await sb.storage.from("documents").createSignedUrl("_guides/"+n,120,dl?{download:gnm(n)}:undefined);
+async function gOpen(n,dl){var w=dl?null:window.open("","_blank"),r=await sb.storage.from("documents").createSignedUrl(GP+"/"+n,120,dl?{download:gnm(n)}:undefined);
  if(r.error){if(w)w.close();msg="Could not open: "+r.error.message;return render()}
  if(dl){var a=document.createElement("a");a.href=r.data.signedUrl;a.download=gnm(n);document.body.appendChild(a);a.click();a.remove()}else if(w)w.location=r.data.signedUrl}
 async function gUp(files){if(role!=="cfd")return;msg="Uploading...";render();var bad="",ok=0,t=Date.now();
- for(var i=0;i<files.length;i++){var r=await sb.storage.from("documents").upload("_guides/"+(t+i)+"_"+files[i].name.replace(/[^\w.\-]/g,"_"),files[i]);if(r.error)bad=r.error.message;else ok++}
+ for(var i=0;i<files.length;i++){var r=await sb.storage.from("documents").upload(GP+"/"+(t+i)+"_"+files[i].name.replace(/[^\w.\-]/g,"_"),files[i]);if(r.error)bad=r.error.message;else ok++}
  msg=bad?"Upload failed: "+bad:ok+" file"+(ok===1?"":"s")+" uploaded";await loadGuides()}
-async function gDel(n){if(role!=="cfd"||!confirm("Remove this guide?"))return;var r=await sb.storage.from("documents").remove(["_guides/"+n]);if(r.error){msg="Could not remove: "+r.error.message;return render()}msg="Guide removed";await loadGuides()}
+async function gDel(n){if(role!=="cfd"||!confirm("Remove this guide?"))return;var r=await sb.storage.from("documents").remove([GP+"/"+n]);if(r.error){msg="Could not remove: "+r.error.message;return render()}msg="Guide removed";await loadGuides()}
 function chatO(){return O[chatI]||O[0]||null}
 function chatLog(o){var L=CHAT[o.id];if(!L)return '<div class="mut">Loading messages...</div>';if(!L.length)return '<div class="mut">No messages yet. Start the conversation about '+e(o.n)+'.</div>';
  return L.map(m=>'<div class="cm'+(m.i===uid?' me':'')+'"><div class="cmh">'+e(m.u)+'<span>'+e(new Date(m.t).toLocaleString("en-GB",{day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"}))+'</span></div><div class="cmt">'+e(m.x)+'</div></div>').join("")}
