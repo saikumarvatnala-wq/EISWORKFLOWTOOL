@@ -189,7 +189,7 @@ function subVals(o,i,j){var key=ST[i][0]+"_"+j,rec=(o.sub||{})[key];return SUB[k
 async function setSub(o,i,j,k,v){var key=ST[i][0]+"_"+j,cur=await readJ(o.id,"_subtasks.json"),b=(cur[key]||subVals(o,i,j)).slice();b[k]=v;cur[key]=b;
  var r=await writeJson(o.id,"_subtasks.json",cur);if(r.error){msg="Could not save: "+r.error.message;return render()}
  o.sub=cur;var all=SUB[key].every((_,n)=>b[n]===true);if(all!==o.t[i][j])await tog(o,i,j,all);else render()}
-var REFS=["PW Overview","Customer Focus Team","Initial Provisioning Orders","Initial Provisioning Overview","Fleet Support","Entry Into Service Readiness","MRO Network","Engine Change","ADEM Support"],refEd=false,refK=0,REF=null,REFL=false,NIL="00000000-0000-0000-0000-000000000000";
+var REFS=["PW Overview","Customer Focus Team","Initial Provisioning Orders","Initial Provisioning Overview","Fleet Support","Entry Into Service Readiness","MRO Network","Engine Change","ADEM Support"],refEd=false,refK=0,REF=null,REFL=false,NIL="01222ad4-c72b-435f-a5cc-e82f9516c38f";
 async function loadRef(){REF=await readJ(NIL,"_refdocs.json");render()}
 function vRef(o){if(REF===null){if(!REFL){REFL=true;loadRef()}return '<div class="card mut">Loading reference documents...</div>'}var st=role!=="cust",ed=st&&refEd,h='<div class="card"><div class="ch"><span>Reference documents</span>'+(st?'<button class="sm" data-a="rfed">'+(ed?'Done':'Manage')+'</button>':'')+'</div><div class="pills">';
  REFS.forEach((l,k)=>{var d=(REF||{})["R"+k],b=(t,a)=>' <button class="sm" data-a="'+a+'" data-k="'+k+'">'+t+'</button>';
@@ -415,7 +415,7 @@ function exportCal(){if(typeof XLSX==="undefined"){msg="The Excel tool could not
  calFilt().forEach(o=>{var ct=(CT||{})[o.id]||{};rows.push([dt(o,7).getFullYear(),o.eng+" : "+o.n,o.icao,o.ac].concat(ST.slice(0,8).map((_,i)=>fm(dt(o,i))),[o.eis?fm(o.eis):"TBD",aar(o)?fm(aar(o)):"TBD"],CF.map(f=>ct[f[0]]||""),[nice(o.cfd),nice(o.fsr),ct.cyient||""]))});
  var wb=XLSX.utils.book_new(),ws=XLSX.utils.aoa_to_sheet(rows);ws["!cols"]=rows[0].map((h,i)=>({wch:i===1?36:i===0?8:i>11?30:16}));XLSX.utils.book_append_sheet(wb,ws,"EIS Customer Calendar");XLSX.writeFile(wb,"EIS_Customer_Calendar_"+iso(new Date())+".xlsx");msg="Calendar downloaded";render()}
 
-var GP="00000000-0000-0000-0000-000000000000/_guides";
+var GP="01222ad4-c72b-435f-a5cc-e82f9516c38f/_guides";
 function gnm(n){return n.replace(/^\d+_/,"")}
 function gsz(b){return !b?"":b<1048576?Math.max(1,Math.round(b/1024))+" KB":(b/1048576).toFixed(1)+" MB"}
 async function loadGuides(){var r=await sb.storage.from("documents").list(GP,{limit:500});GLE=r.error?r.error.message:"";GL=(r.data||[]).filter(x=>x.name&&x.name[0]!==".").sort((a,b)=>parseInt(b.name)-parseInt(a.name));render()}
