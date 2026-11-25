@@ -197,7 +197,7 @@ function vRef(o){if(REF===null){if(!REFL){REFL=true;loadRef()}return '<div class
   else h+='<button class="pill ref'+(d?'':' no')+'" data-a="rfopn" data-k="'+k+'" title="'+e(d?d.name:"No document attached yet")+'">'+e(l)+'</button>'});
  return h+'</div>'+(ed?'<input type="file" id="rffile" hidden data-a="rffile">':'')+'</div>'}
 async function rfSave(o,cur,old,ok){var r=await writeJson(NIL,"_refdocs.json",cur);if(r.error){msg="Could not save: "+r.error.message;return render()}if(old)await sb.storage.from("documents").remove([old.path]);REF=cur;msg=ok;render()}
-async function rfUp(o,k,f){if(role==="cust"||!f)return;msg="Uploading...";render();var path=NIL+"/_ref/R"+k+"_"+Date.now()+"_"+f.name.replace(/[^\w.\-]/g,"_"),u=await sb.storage.from("documents").upload(path,f);if(u.error){msg="Upload failed: "+u.error.message;return render()}
+async function rfUp(o,k,f){if(role==="cust"||!f)return;msg="Uploading...";render();var path=NIL+"/r"+k+"_"+Date.now()+"_"+f.name.replace(/[^\w.\-]/g,"_"),u=await sb.storage.from("documents").upload(path,f);if(u.error){msg="Upload failed: "+u.error.message;return render()}
  var cur=await readJ(NIL,"_refdocs.json"),old=cur["R"+k];cur["R"+k]={name:f.name,path:path};await rfSave(o,cur,old,"Document attached")}
 async function rfDel(o,k){if(role==="cust"||!confirm("Remove this document?"))return;var cur=await readJ(NIL,"_refdocs.json"),old=cur["R"+k];delete cur["R"+k];await rfSave(o,cur,old,"Document removed")}
 async function rfOpen(o,k){var d=(REF||{})["R"+k];if(!d){msg="No document attached yet";return render()}var w=window.open("","_blank"),r=await sb.storage.from("documents").createSignedUrl(d.path,120);if(r.error){if(w)w.close();msg="Could not open: "+r.error.message;return render()}if(w)w.location=r.data.signedUrl}
@@ -415,20 +415,21 @@ function exportCal(){if(typeof XLSX==="undefined"){msg="The Excel tool could not
  calFilt().forEach(o=>{var ct=(CT||{})[o.id]||{};rows.push([dt(o,7).getFullYear(),o.eng+" : "+o.n,o.icao,o.ac].concat(ST.slice(0,8).map((_,i)=>fm(dt(o,i))),[o.eis?fm(o.eis):"TBD",aar(o)?fm(aar(o)):"TBD"],CF.map(f=>ct[f[0]]||""),[nice(o.cfd),nice(o.fsr),ct.cyient||""]))});
  var wb=XLSX.utils.book_new(),ws=XLSX.utils.aoa_to_sheet(rows);ws["!cols"]=rows[0].map((h,i)=>({wch:i===1?36:i===0?8:i>11?30:16}));XLSX.utils.book_append_sheet(wb,ws,"EIS Customer Calendar");XLSX.writeFile(wb,"EIS_Customer_Calendar_"+iso(new Date())+".xlsx");msg="Calendar downloaded";render()}
 
-var GP="01222ad4-c72b-435f-a5cc-e82f9516c38f/_guides";
-function gnm(n){return n.replace(/^\d+_/,"")}
 function gsz(b){return !b?"":b<1048576?Math.max(1,Math.round(b/1024))+" KB":(b/1048576).toFixed(1)+" MB"}
-async function loadGuides(){var r=await sb.storage.from("documents").list(GP,{limit:500});GLE=r.error?r.error.message:"";GL=(r.data||[]).filter(x=>x.name&&x.name[0]!==".").sort((a,b)=>parseInt(b.name)-parseInt(a.name));render()}
+async function loadGuides(){var j=await readJ(NIL,"_guides.json");GLE="";GL=(j.items||[]).slice().sort((a,b)=>b.t-a.t);render()}
+async function gIdx(fn){var cur=await readJ(NIL,"_guides.json"),r=await writeJson(NIL,"_guides.json",{items:fn(cur.items||[])});if(r.error){msg="Could not save: "+r.error.message;return false}return true}
 function vGuide(){var cf=role==="cfd";if(GL===null){if(!GLL){GLL=true;loadGuides()}return '<div class="card mut">Loading guides...</div>'}
- return '<div class="card"><div class="ch"><span>Guides and documents</span>'+(cf?'<label class="btn" style="padding:8px 16px;text-transform:none;cursor:pointer">Upload guide<input type="file" multiple hidden data-a="gfile"></label>':'')+'</div>'+(GLE?'<div class="err" role="alert">Could not load guides (folder '+e(GP)+'): '+e(GLE)+'</div>':'')
- +(GL.length?GL.map(x=>{var n=gnm(x.name),d=new Date(parseInt(x.name)),sz=x.metadata&&x.metadata.size?gsz(x.metadata.size):"";return '<div class="fl row"><span>'+e(n)+'<br><span class="mut">'+(isNaN(d)?"":"Added "+fm(d))+(sz?" \u00b7 "+sz:"")+'</span></span><span><button class="sm" data-a="gopn" data-n="'+e(x.name)+'">View</button> <button class="sm" data-a="gdl" data-n="'+e(x.name)+'">Download</button>'+(cf?' <button class="sm" data-a="gdel" data-n="'+e(x.name)+'">Remove</button>':'')+'</span></div>'}).join(""):'<div class="fl mut">No guides uploaded yet.'+(cf?' Use Upload guide to add one.':'')+'</div>')+'</div>'}
-async function gOpen(n,dl){var w=dl?null:window.open("","_blank"),r=await sb.storage.from("documents").createSignedUrl(GP+"/"+n,120,dl?{download:gnm(n)}:undefined);
+ return '<div class="card"><div class="ch"><span>Guides and documents</span>'+(cf?'<label class="btn" style="padding:8px 16px;text-transform:none;cursor:pointer">Upload guide<input type="file" multiple hidden data-a="gfile"></label>':'')+'</div>'
+ +(GL.length?GL.map(x=>'<div class="fl row"><span>'+e(x.n)+'<br><span class="mut">Added '+fm(new Date(x.t))+(x.s?" \u00b7 "+gsz(x.s):"")+'</span></span><span><button class="sm" data-a="gopn" data-n="'+e(x.f)+'">View</button> <button class="sm" data-a="gdl" data-n="'+e(x.f)+'">Download</button>'+(cf?' <button class="sm" data-a="gdel" data-n="'+e(x.f)+'">Remove</button>':'')+'</span></div>').join(""):'<div class="fl mut">No guides uploaded yet.'+(cf?' Use Upload guide to add one.':'')+'</div>')+'</div>'}
+async function gOpen(f,dl){var it=GL.find(x=>x.f===f),nm=it?it.n:f,w=dl?null:window.open("","_blank"),r=await sb.storage.from("documents").createSignedUrl(NIL+"/"+f,120,dl?{download:nm}:undefined);
  if(r.error){if(w)w.close();msg="Could not open: "+r.error.message;return render()}
- if(dl){var a=document.createElement("a");a.href=r.data.signedUrl;a.download=gnm(n);document.body.appendChild(a);a.click();a.remove()}else if(w)w.location=r.data.signedUrl}
-async function gUp(files){if(role!=="cfd")return;msg="Uploading...";render();var bad="",ok=0,t=Date.now();
- for(var i=0;i<files.length;i++){var r=await sb.storage.from("documents").upload(GP+"/"+(t+i)+"_"+files[i].name.replace(/[^\w.\-]/g,"_"),files[i]);if(r.error)bad=r.error.message;else ok++}
- msg=bad?"Upload failed: "+bad:ok+" file"+(ok===1?"":"s")+" uploaded";await loadGuides()}
-async function gDel(n){if(role!=="cfd"||!confirm("Remove this guide?"))return;var r=await sb.storage.from("documents").remove([GP+"/"+n]);if(r.error){msg="Could not remove: "+r.error.message;return render()}msg="Guide removed";await loadGuides()}
+ if(dl){var a=document.createElement("a");a.href=r.data.signedUrl;a.download=nm;document.body.appendChild(a);a.click();a.remove()}else if(w)w.location=r.data.signedUrl}
+async function gUp(files){if(role!=="cfd")return;msg="Uploading...";render();var bad="",add=[],t=Date.now();
+ for(var i=0;i<files.length;i++){var f="g"+(t+i)+"_"+files[i].name.replace(/[^\w.\-]/g,"_"),r=await sb.storage.from("documents").upload(NIL+"/"+f,files[i]);if(r.error)bad=r.error.message;else add.push({f:f,n:files[i].name,s:files[i].size,t:t+i})}
+ if(add.length&&!(await gIdx(it=>it.concat(add))))bad=msg.replace("Could not save: ","");
+ msg=bad?"Upload failed: "+bad:add.length+" file"+(add.length===1?"":"s")+" uploaded";await loadGuides()}
+async function gDel(f){if(role!=="cfd"||!confirm("Remove this guide?"))return;var r=await sb.storage.from("documents").remove([NIL+"/"+f]);if(r.error){msg="Could not remove: "+r.error.message;return render()}
+ if(await gIdx(it=>it.filter(x=>x.f!==f)))msg="Guide removed";await loadGuides()}
 function chatO(){return O[chatI]||O[0]||null}
 function chatLog(o){var L=CHAT[o.id];if(!L)return '<div class="mut">Loading messages...</div>';if(!L.length)return '<div class="mut">No messages yet. Start the conversation about '+e(o.n)+'.</div>';
  return L.map(m=>'<div class="cm'+(m.i===uid?' me':'')+'"><div class="cmh">'+e(m.u)+'<span>'+e(new Date(m.t).toLocaleString("en-GB",{day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"}))+'</span></div><div class="cmt">'+e(m.x)+'</div></div>').join("")}
