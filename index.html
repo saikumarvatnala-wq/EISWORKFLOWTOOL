@@ -124,7 +124,6 @@ textarea{width:100%;font-family:ui-monospace,Consolas,monospace;font-size:12.5px
 .rk{border:1px solid var(--tx);min-height:90px;padding:10px;white-space:pre-wrap;background:var(--card)}.rk.red{border-color:var(--bd);background:var(--bdb)}
 .qe{cursor:text}.qe:hover{outline:2px dashed var(--acc);outline-offset:3px}
 .tin{width:100%;font-family:inherit;font-size:22px;font-weight:700;padding:6px 8px;text-transform:uppercase}.tin.tc2{width:70%;text-align:center;font-size:18px;font-weight:400}
-.sip{flex:0 0 112px;align-self:center;font-weight:600;font-size:15px;line-height:1.6;color:var(--acc);text-decoration:underline}
 .rpt.pdf{--card:#fff;--tx:#14213d;--mut:#6a778b;--line:#dfe5ed;--bg:#eef1f5;--bd:#d6453d;--bdb:#fbdcdc;color:#14213d;background:#fff}
 .mo2{margin-top:8px;display:flex;flex-direction:column;gap:6px}.mo2 .sm{align-self:flex-start}
 .ro .qe{cursor:default}.ro .qe:hover{outline:0}
@@ -138,15 +137,6 @@ textarea{width:100%;font-family:ui-monospace,Consolas,monospace;font-size:12.5px
 .cal{max-height:72vh;overflow:auto}
 .cal th{z-index:2}.cal th.nmh{left:0;z-index:3}.cal td.nm{position:sticky;left:0;z-index:1;background:var(--card)}
 .cal input{font-size:12.5px;padding:3px 4px;min-width:0}
-.chatfab{position:fixed;right:20px;bottom:calc(20px + env(safe-area-inset-bottom,0px));width:56px;height:56px;border-radius:50%;border:0;background:var(--acc);color:#fff;display:grid;place-items:center;box-shadow:0 4px 14px rgba(0,0,0,.28);z-index:50}
-.chatfab svg{width:28px;height:28px}
-.chatbox{position:fixed;right:20px;bottom:calc(88px + env(safe-area-inset-bottom,0px));width:min(380px,calc(100vw - 24px));height:min(520px,calc(100vh - 130px));background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:0 8px 28px rgba(0,0,0,.3);display:flex;flex-direction:column;overflow:hidden;z-index:50}
-.chh{display:flex;gap:8px;align-items:center;padding:10px 12px;background:var(--side);color:#fff}.chh select{flex:1;min-width:0;padding:5px;font-size:13px}
-.chl{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px}
-.cm{max-width:85%;align-self:flex-start;background:var(--bg);border-radius:10px;padding:6px 10px}.cm.me{align-self:flex-end;background:var(--accb)}
-.cmh{font-size:11.5px;color:var(--mut);font-weight:600}.cmh span{font-weight:400;margin-left:6px}
-.cmt{white-space:pre-wrap;overflow-wrap:anywhere;font-size:14px}
-.chf{display:flex;gap:8px;padding:10px;border-top:1px solid var(--line)}.chf textarea{flex:1;font-family:inherit;font-size:14px;resize:none}.chf .btn{padding:8px 16px}
 .ni{text-align:center;max-width:90px}
 .tb label{display:flex;flex-direction:column;font-size:12px;color:var(--mut);gap:3px}.tb label select{min-width:130px}
 .tkl{display:flex;gap:10px;align-items:center;flex:1;cursor:pointer}.tk .sm{margin-left:auto;white-space:nowrap}
@@ -162,6 +152,28 @@ td.edt,td.edt input{font-weight:800}
 @media(max-width:900px){.dg{grid-template-columns:1fr}}
 @media print{aside,.noprint,.usr{display:none!important}.app{display:block}main{padding:0}*{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
 @media(max-width:760px){.app{grid-template-columns:1fr}aside{flex-direction:row;height:auto;position:static;justify-content:center;gap:24px;padding:10px}.brand{margin:0}.ni i{width:38px;height:38px}main{padding:14px 12px}.bot{grid-template-columns:1fr}.oh,.oc{border-right:0;border-bottom:1px solid var(--line)}}
+
+/* ===== FAQ Chat Bot ===== */
+.botfab{position:fixed;right:20px;bottom:calc(20px + env(safe-area-inset-bottom,0px));width:56px;height:56px;border-radius:50%;border:0;background:var(--side);color:#e8b923;display:grid;place-items:center;box-shadow:0 4px 14px rgba(0,0,0,.28);z-index:49}
+.botfab.l{right:88px}.botfab svg{width:28px;height:28px}
+.botbox{position:fixed;right:20px;bottom:calc(88px + env(safe-area-inset-bottom,0px));width:min(380px,calc(100vw - 24px));height:min(520px,calc(100vh - 130px));background:var(--card);border:1px solid var(--line);border-radius:10px;box-shadow:0 8px 28px rgba(0,0,0,.3);display:flex;flex-direction:column;overflow:hidden;z-index:51}
+.botbox.l{right:20px}
+.botbox.min{height:auto}.botbox.min .botlog,.botbox.min .botf{display:none}
+.both{display:flex;align-items:center;gap:8px;padding:12px 14px;background:var(--side);color:#e8b923;font-weight:600;text-transform:uppercase;letter-spacing:.02em}
+.both svg{width:20px;height:20px;flex:none}.both b{flex:1;font-weight:600}
+.both button{background:none;border:0;color:var(--acc);padding:2px 4px;line-height:1;font-size:22px;font-weight:700}
+.botlog{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;background:var(--card)}
+.bm{max-width:88%;padding:9px 12px;border-radius:8px;background:var(--bg);font-size:14px;overflow-wrap:anywhere;white-space:pre-wrap}
+.bm.me{align-self:flex-end;background:var(--accb)}
+.bmr{display:flex;gap:8px;align-items:flex-start}.bmr svg{width:20px;height:20px;flex:none;margin-top:8px;color:var(--mut)}.bmr .bm{flex:1;max-width:none}
+.bqs{border:1px solid var(--line);border-radius:8px;padding:10px;background:var(--bg);display:flex;flex-direction:column;align-items:flex-start;gap:8px;margin-left:28px}
+.bqs>span{font-size:14px}
+.bq{background:var(--accb);color:var(--tx);border:1px solid transparent;border-radius:6px;padding:6px 10px;font-size:14px;text-align:left}
+.bq:hover{border-color:var(--acc)}
+.botf{display:flex;align-items:center;gap:8px;padding:10px 12px;background:var(--bg);border-top:1px solid var(--line)}
+.botf input{flex:1;min-width:0;padding:10px 12px;border-radius:8px;font-size:14px}
+.botf button{background:none;border:0;color:var(--acc);padding:4px;display:grid;place-items:center}.botf button svg{width:26px;height:26px}
+@media print{.botfab,.botbox{display:none!important}}
 </style>
 </head>
 <body><div id="app"></div>
@@ -316,7 +328,7 @@ async function newPw(){var g=id=>((document.getElementById(id)||{}).value||""),a
  if(r.error){lerr="Could not update the password: "+r.error.message;return render()}
  await sb.auth.signOut();recov=false;REC=false;try{history.replaceState(null,"",location.pathname)}catch(x){}lok="Password updated. Please log in with your new password.";render()}
 async function boot(){sb.auth.onAuthStateChange(evn=>{if(evn==="PASSWORD_RECOVERY"){recov=true;render()}});var s=(await sb.auth.getSession()).data.session;if(REC&&s){recov=true;render();return}if(s)await enter(s.user);else render()}
-var LT=[["spec","EIS Specialist"],["cfd","Customer Fleet Director"],["air","Airlines"]];
+var LT=[["spec","EIS Specialist"],["cfd","Customer Fleet Director (CFD)"],["air","Airlines"]];
 function setLt(v){ltype=v;lerr="";lok="";var er=document.querySelector(".lgn .err");if(er)er.textContent=""}
 async function login(){lem=document.getElementById("em").value.trim();var pw=document.getElementById("pw").value;if(!ltype){var er=document.querySelector(".lgn .err");if(er)er.textContent="Choose a login type first";return}lerr="";lok="";busy=true;render();var r=await sb.auth.signInWithPassword({email:lem,password:pw});if(r.error){busy=false;lerr=r.error.message;return render()}await enter(r.data.user,ltype)}
 async function enter(u,type){uid=u.id;busy=true;render();var p=await sb.from("profiles").select("*").eq("id",uid).single();
@@ -324,8 +336,8 @@ async function enter(u,type){uid=u.id;busy=true;render();var p=await sb.from("pr
  prof=p.data;if(type){var rr=prof.role,okk=type==="cfd"?rr==="cfd":type==="air"?rr==="customer":rr!=="cfd"&&rr!=="customer";if(!okk){lerr="This account is not a "+LT.find(z=>z[0]===type)[1]+" account. Choose the correct login type.";busy=false;await sb.auth.signOut();role=null;prof=null;return render()}}role=prof.role==="customer"?"cust":"cfd";
  try{await loadAll()}catch(x){lerr=String(x.message||x);busy=false;await sb.auth.signOut();role=null;return render()}
  busy=false;view="dash";var o=me();if(o)sel=cur(o);render()}
-async function logout(){await sb.auth.signOut();role=null;prof=null;O=[];RC={};rcEdit=false;CT=null;CTL=false;CHAT={};chatOpen=false;calEd=false;CE={};dstat="";GL=null;GLL=false;RS=null;RSL=false;rsEd="";REF=null;REFL=false;render()}
-async function tog(o,i,j,v){o.t[i][j]=v;var r=await sb.from("customer_tasks").update({done:v,done_by:uid,done_at:v?new Date().toISOString():null}).eq("customer_id",o.id).eq("task_id",TID[ST[i][0]][j]);if(r.error){o.t[i][j]=!v;msg="Could not save: "+r.error.message}else if(v&&stt(o,i)[0]==="Complete")await freezeNow(o);render()}
+async function logout(){await sb.auth.signOut();role=null;prof=null;O=[];RC={};rcEdit=false;CT=null;CTL=false;calEd=false;CE={};dstat="";GL=null;GLL=false;RS=null;RSL=false;rsEd="";REF=null;REFL=false;render()}
+async function tog(o,i,j,v){o.t[i][j]=v;var r;try{var tid=(TID[ST[i][0]]||[])[j];if(tid==null)throw new Error("task id not found for "+ST[i][0]+"."+(j+1));r=await sb.from("customer_tasks").update({done:v,done_by:uid,done_at:v?new Date().toISOString():null}).eq("customer_id",o.id).eq("task_id",tid).select()}catch(ex){r={error:{message:ex.message}}}if(!r.error&&(!r.data||!r.data.length))r={error:{message:"no row was updated (task row missing or no permission for your login)"}};if(r.error){o.t[i][j]=!v;msg="Could not save: "+r.error.message;render()}else if(v&&stt(o,i)[0]==="Complete")await freezeNow(o);render()}
 async function upl(o,i,file){var code=ST[i][0],path=o.id+"/"+code+"/"+Date.now()+"_"+file.name.replace(/[^\w.\-]/g,"_");
  msg="Uploading...";render();var u=await sb.storage.from("documents").upload(path,file);if(u.error){msg="Upload failed: "+u.error.message;return render()}
  var r=await sb.from("documents").insert({customer_id:o.id,milestone_code:code,file_name:file.name,file_path:path,uploaded_by:uid}).select().single();if(r.error){msg="Could not save: "+r.error.message;return render()}
@@ -370,7 +382,7 @@ function vDash0(o,Lf){var L=vis(),p=pc(o),c=cur(o),cnt={od:0,cu:0,co:0,pd:0},cf=
  +oc(fld("Airframer or Lessor",e(o.tt)||"TBD"),fld("Collins Flight Sens",e(o.cfs)||"TBD"))
  +oc(fld("CFD",e(nice(o.cfd))||"TBD"),fld("FSR",e(nice(o.fsr))||"TBD")+(cf?fld("EIS Specialist",sp):""))+'</div>';
  var h=editing&&cf?vEdit(o):ord;
- h+='<div class="card"><div class="ch"><span>Report card</span></div><div class="chips">'+[["od","Overdue"],["cu","Current"],["co","Completed"],["pd","Document pending"]].map(k=>'<button class="chip '+k[0]+(flt===k[0]?' on':'')+'" data-a="flt" data-v="'+k[0]+'">'+k[1]+' <b>'+pad(cnt[k[0]])+'</b></button>').join("")+'</div><div class="mss"><a class="sip" href="Standard_Instructions.pdf" target="_blank" rel="noopener" download="Standard_Instructions.pdf">Standard Instructions (PDF) &#8595;</a>';
+ h+='<div class="card"><div class="ch"><span>Report card</span></div><div class="chips">'+[["od","Overdue"],["cu","Current"],["co","Completed"],["pd","Document pending"]].map(k=>'<button class="chip '+k[0]+(flt===k[0]?' on':'')+'" data-a="flt" data-v="'+k[0]+'">'+k[1]+' <b>'+pad(cnt[k[0]])+'</b></button>').join("")+'</div><div class="mss">';
  var shown=0;ST.forEach((s,i)=>{var st=stt(o,i),n=o.t[i].filter(Boolean).length;if(flt&&G[st[0]]!==flt)return;shown++;
   h+='<div class="ms'+(sel===i?' on':'')+'" role="button" tabindex="0" data-a="sel" data-i="'+i+'"><h3>'+s[0]+': '+e(s[1])+'</h3><p>'+n+' of '+s[2].length+' tasks done. Due '+fm(dt(o,i))+'</p><div class="bt"><span class="tag '+st[0]+'">'+st[1]+'</span><button class="pill" data-a="dv" data-i="'+i+'">Detailed view</button></div></div>'});
  if(!shown)h+='<div class="mut" style="padding:12px">No milestones match this filter. Select the filter again to clear it.</div>';
@@ -432,7 +444,7 @@ function vTasks0(o){var s=ST[sel],n=o.t[sel].filter(Boolean).length,st=stt(o,sel
 var CH=["Kickoff / Welcome","Milestone 0","Milestone 1","Milestone 2","Milestone 3 (Mid-term)","Milestone 4","Milestone 5 (Bootcamp)","Milestone 6 (TOT)","Revenue Service","AAR (+3m)"];
 function aar(o){return o.eis?new Date(o.eis.getFullYear(),o.eis.getMonth()+3,o.eis.getDate()):null}
 function calList(){return vis().slice().sort((a,b)=>dt(a,7)-dt(b,7))}
-var calQ="",calY="",calP="",calS="",calEd=false,CE={},CT=null,CTL=false,chatOpen=false,chatI=0,chatDraft="",CHAT={},dstat="",fr="",ir="",itY="",irY="",GL=null,GLL=false,GLE="";
+var calQ="",calY="",calP="",calS="",calEd=false,CE={},CT=null,CTL=false,dstat="",fr="",ir="",itY="",irY="",GL=null,GLL=false,GLE="";
 var CF=[["fsm","FSM Collins East Power & Controls POC"],["asm","ASM Collins East Power & Controls POC"],["west","Collins West Aero structures POC"],["tss","TSS CSR"],["spares","Spares POC"]];
 async function setLogV(o,at,m,on){if(role==="cust"||!o)return;var cur=await readJ(o.id,"_datelog.json",1);if(!cur){msg="Could not read the latest data. Try again";return render()}
  var it=(cur.items||[]).map(x=>x.at===at&&x.m===m?Object.assign({},x,{v:on?{by:(prof&&(prof.name||prof.email))||"",at:new Date().toISOString()}:null}):x),r=await writeJson(o.id,"_datelog.json",{items:it});
@@ -598,38 +610,24 @@ async function gUp(files){if(role!=="cfd")return;msg="Uploading...";render();var
  msg=bad?"Upload failed: "+bad:add.length+" file"+(add.length===1?"":"s")+" uploaded";await loadGuides()}
 async function gDel(f){if(role!=="cfd"||!confirm("Remove this guide?"))return;var r=await sb.storage.from("documents").remove([NIL+"/"+f]);if(r.error){msg="Could not remove: "+r.error.message;return render()}
  if(await gIdx(it=>it.filter(x=>x.f!==f)))msg="Guide removed";await loadGuides()}
-function chatO(){return O[chatI]||O[0]||null}
-function chatLog(o){var L=CHAT[o.id];if(!L)return '<div class="mut">Loading messages...</div>';if(!L.length)return '<div class="mut">No messages yet. Start the conversation about '+e(o.n)+'.</div>';
- return L.map(m=>'<div class="cm'+(m.i===uid?' me':'')+'"><div class="cmh">'+e(m.u)+'<span>'+e(new Date(m.t).toLocaleString("en-GB",{day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"}))+'</span></div><div class="cmt">'+e(m.x)+'</div></div>').join("")}
-function chatHtml(){if(!role||role==="cust")return "";
- var ic=chatOpen?'<path d="M18 6 6 18M6 6l12 12"/>':'<path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/>',o=chatO(),
- b='<button class="chatfab noprint" data-a="chat" aria-label="'+(chatOpen?'Close team chat':'Open team chat')+'" aria-expanded="'+chatOpen+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+ic+'</svg></button>';
- if(!chatOpen)return b;
- return '<div class="chatbox noprint" role="dialog" aria-label="Team chat"><div class="chh"><b>Team chat</b>'+(O.length?'<select data-a="chatc" aria-label="Customer chat">'+O.map((x,i)=>'<option value="'+i+'"'+(x===o?' selected':'')+'>'+e(x.n)+' ('+e(x.eng)+')</option>').join("")+'</select>':'')+'</div><div class="chl" id="chatlog" aria-live="polite">'+(o?chatLog(o):'<div class="mut">No customers yet.</div>')+'</div>'+(o?'<div class="chf"><textarea id="chatin" rows="2" placeholder="Write a message" aria-label="Message">'+e(chatDraft)+'</textarea><button class="btn" data-a="chatsend">Send</button></div>':'')+'</div>'+b}
-async function loadChat(o,quiet){var d=await sb.storage.from("documents").download(o.id+"/_chat.json"),j=[];if(!d.error){try{j=JSON.parse(await d.data.text())||[]}catch(x){j=[]}}if(!Array.isArray(j))j=[];CHAT[o.id]=j;
- if(quiet){var l=document.getElementById("chatlog");if(l&&chatO()===o){var end=l.scrollHeight-l.scrollTop-l.clientHeight<40;l.innerHTML=chatLog(o);if(end)l.scrollTop=l.scrollHeight}}else render()}
-async function sendChat(){var o=chatO(),t=document.getElementById("chatin"),x=t?t.value.trim():"";if(!o||!x)return;
- var d=await sb.storage.from("documents").download(o.id+"/_chat.json"),j=[];if(!d.error){try{j=JSON.parse(await d.data.text())||[]}catch(ex){j=[]}}if(!Array.isArray(j))j=[];
- j.push({i:uid,u:nice(prof.name||prof.email),t:new Date().toISOString(),x:x.slice(0,2000)});j=j.slice(-200);
- var r=await writeJson(o.id,"_chat.json",j);if(r.error){msg="Could not send: "+r.error.message;return render()}CHAT[o.id]=j;chatDraft="";render();var t2=document.getElementById("chatin");if(t2)t2.focus()}
 function vAdd(){var sp=PR.filter(p=>p.role!=="cfd");
  return '<div class="card"><div class="ch"><span>Add customer</span></div><div class="fm">'+[["fn","Customer name"],["fi","ICAO"],["fc","Country"],["fa","Number of aircraft","number"],["fo","Contract type"],["ft","Airframer or Lessor"],["fs2","Collins Flight Sens"],["fk","Kickoff date","date"],["ft2","TOT (Title of Transfer)","date"],["fe","Revenue Service","date"]].map(f=>'<label>'+f[1]+'<input id="'+f[0]+'" type="'+(f[2]||"text")+'"></label>').join("")+'<label>Engine program<select id="fpg">'+PROGS.map(x=>'<option>'+x+'</option>').join("")+'</select></label><label>EIS Specialist<select id="fsp"><option value="">Not assigned</option>'+sp.map(p=>'<option value="'+p.id+'">'+e(p.name||p.email)+'</option>').join("")+'</select></label><label>FSR name<input id="ffsr" type="text" list="fsrl" placeholder="Pick a user or type a name" autocomplete="off"></label><label>Status<select id="fst">'+SL.map(x=>'<option value="'+x[0]+'">'+x[1]+'</option>').join("")+'</select></label><label>Region<select id="frg">'+regOpts("","Select region")+'</select></label>'+fsrList()+'</div><button class="btn" style="margin-top:12px" data-a="addc">Save customer</button></div>'
  +'<div class="card"><div class="ch"><span>Import from Excel</span></div><div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px"><button class="btn" data-a="imptpl">Download template</button><label class="btn" style="cursor:pointer">Upload filled template<input type="file" accept=".xlsx,.xls,.csv" hidden data-a="impfile"></label></div><p class="mut">Download the template, fill one customer per row, then upload it here. Or copy rows from Excel and paste them below, one customer per row, with these columns in this order: customer name, ICAO, country, engine program, number of aircraft, contract type, airframer or lessor, Collins Flight Sens, TOT, kickoff date, specialist email, FSR name (optional), Revenue Service date (optional), Region (America, APAC, China, Europe or MEA, optional). Write dates as YYYY-MM-DD, for example 2027-04-20.</p><textarea id="imp" rows="6" aria-label="Pasted rows"></textarea><button class="btn" style="margin-top:10px" data-a="imp">Import customers</button></div>'}
 function render(){if(calEd)stashCal();var a=document.getElementById("app"),y=window.scrollY,sc=document.querySelector(".mss,.stp,.cal"),sx=sc?sc.scrollLeft:0,sy2=sc?sc.scrollTop:0;
  var BR='<div class="lgn-top"><b>PRATT &amp; WHITNEY</b><span>EIS Workflow Tool</span></div>',MSG='<div class="err" role="alert">'+e(lerr)+'</div>'+(lok?'<div class="okn" role="status">'+e(lok)+'</div>':'');
  if(recov){a.innerHTML='<div class="lgn">'+BR+'<div class="lgn-card"><h1>Set a new password</h1><label class="fl" for="np1">New password (at least 8 characters)</label><input id="np1" type="password" autocomplete="new-password"><label class="fl" for="np2">Confirm new password</label><input id="np2" type="password" autocomplete="new-password">'+MSG+'<button class="lgb" data-a="newpw"'+(busy?' disabled':'')+'>'+(busy?'SAVING...':'SAVE PASSWORD')+'</button></div></div>';return}
- if(!role){a.innerHTML='<div class="lgn">'+BR+'<div class="lgn-card"><h1>Login to your account</h1><div class="lgr" role="radiogroup" aria-label="Login type">'+LT.map(z=>'<label><input type="radio" name="lt" value="'+z[0]+'" data-a="lt"'+(ltype===z[0]?' checked':'')+'><span>'+z[1]+'</span></label>').join("")+'</div><label class="fl" for="em">User ID (email)</label><input id="em" type="email" value="'+e(lem)+'" autocomplete="username"><label class="fl" for="pw">Password</label><input id="pw" type="password" autocomplete="current-password"><button type="button" class="lk" data-a="forgot">Forgot Password?</button>'+MSG+'<button class="lgb" id="sgn" data-a="in"'+(busy?' disabled':'')+'>'+(busy?'SIGNING IN...':'LOGIN')+'</button><p class="lgf">Don\u2019t have an account? <a class="lk" href="mailto:'+ACCESS_EMAIL+'?subject='+encodeURIComponent("Request access to the EIS Workflow Tool")+'&body='+encodeURIComponent("Please create an account for me.\n\nName:\nWork email:\nRole (EIS Specialist, Customer Fleet Director or Airlines):\nAirline (if applicable):")+'">Request access</a></p><p class="lgv">Version 2026.11.25-login</p></div><div class="lgn-tag">Keeping the world\u2019s fleet flying safely, sustainably, and efficiently.</div></div>';return}
+ if(!role){a.innerHTML='<div class="lgn">'+BR+'<div class="lgn-card"><h1>Login to your account</h1><div class="lgr" role="radiogroup" aria-label="Login type">'+LT.map(z=>'<label><input type="radio" name="lt" value="'+z[0]+'" data-a="lt"'+(ltype===z[0]?' checked':'')+'><span>'+z[1]+'</span></label>').join("")+'</div><label class="fl" for="em">User ID (email)</label><input id="em" type="email" value="'+e(lem)+'" autocomplete="username"><label class="fl" for="pw">Password</label><input id="pw" type="password" autocomplete="current-password"><button type="button" class="lk" data-a="forgot">Forgot Password?</button>'+MSG+'<button class="lgb" id="sgn" data-a="in"'+(busy?' disabled':'')+'>'+(busy?'SIGNING IN...':'LOGIN')+'</button><p class="lgf">Don\u2019t have an account? <a class="lk" href="mailto:'+ACCESS_EMAIL+'?subject='+encodeURIComponent("Request access to the EIS Workflow Tool")+'&body='+encodeURIComponent("Please create an account for me.\n\nName:\nWork email:\nRole (EIS Specialist, Customer Fleet Director (CFD) or Airlines):\nAirline (if applicable):")+'">Request access</a></p><p class="lgv">Version 2026.11.25-login</p></div><div class="lgn-tag">Keeping the world\u2019s fleet flying safely, sustainably, and efficiently.</div></div>';return}
  var o=me(),cf=role==="cfd",nv=[["add","Add customer","&#43;"],["dash","Skyline","&#9638;"],["cal","Calendar","&#128197;"],["tasks","EIS Overview","&#9745;"],["rc","Report Card","&#9636;"],["rem","Reminders","&#9993;"],["guide","EIS User Guide","&#128214;"]].filter(x=>cf||(x[0]!=="add"&&x[0]!=="ins")&&!(role==="cust"&&x[0]==="rem"));
  if(role!=="cfd"&&(view==="ins"||view==="add"||view==="addm"))view="dash";if(role==="cust"&&view==="rem")view="dash";var ttl={dash:"Skyline",tasks:"EIS Overview",cal:"EIS Customer Calendar",tdet:"EIS Overview",add:"Add customer",rc:"Report Card",rem:"Reminders",guide:"EIS User Guide",addm:"Add engine model"}[view],b;
  if(view==="tasks")b=vOut();else if(view==="cal")b=vCal();else if(view==="guide")b=vGuide();else if(view==="add"&&cf)b=vAdd();else if(view==="addm"&&cf&&o)b=vAddM(o);else if(!o)b='<div class="card">'+(cf?'No customers yet. Use Add customer in the left menu.':'No customers are assigned to you yet.')+'</div>';
  else b=view==="dash"?vDash(o):view==="tdet"?'<button class="sm" data-a="v" data-v="'+(TFL[tFrom]?tFrom:"tasks")+'" style="margin-bottom:10px">Back to '+(TFL[tFrom]||"EIS Overview")+'</button>'+vTasks(o):view==="rc"?vRc(o):view==="rem"?vRem():vDash(o);
- a.innerHTML='<div class="app'+(role==="cust"?" ro":"")+'"><aside><div class="brand">P&amp;WA</div>'+nv.map(x=>'<button class="ni'+(view===x[0]||(view==="tdet"&&x[0]==="tasks")?' on':'')+'" data-a="v" data-v="'+x[0]+'"><i aria-hidden="true">'+x[2]+'</i>'+x[1]+'</button>').join("")+'</aside><main><div class="top"><div><small>EIS Work Flow Tool <span style="font-size:11px;color:var(--mut);font-weight:400">version 2026.11.26</span></small><h1>'+ttl+'</h1></div><div class="usr"><div><b>'+e(prof.name||prof.email)+'</b><span>'+(cf?(prof.role==="cfd"?"Customer Fleet Director":"EIS Specialist"):role==="cust"?"Airline customer (view only)":"EIS Specialist")+'</span></div><div class="av">'+e((prof.name||prof.email||"?").slice(0,2).toUpperCase())+'</div><button class="sm" data-a="out">Log out</button></div></div>'+b+'</main></div>'+chatHtml()+(msg?'<div class="toast" role="status">'+e(msg)+'</div>':'');
- window.scrollTo(0,y);var c2=document.querySelector(".mss,.stp,.cal");if(c2){c2.scrollLeft=sx;if(c2.classList.contains("cal"))c2.scrollTop=sy2}var cl=document.getElementById("chatlog");if(cl)cl.scrollTop=cl.scrollHeight;
+ a.innerHTML='<div class="app'+(role==="cust"?" ro":"")+'"><aside><div class="brand">P&amp;WA</div>'+nv.map(x=>'<button class="ni'+(view===x[0]||(view==="tdet"&&x[0]==="tasks")?' on':'')+'" data-a="v" data-v="'+x[0]+'"><i aria-hidden="true">'+x[2]+'</i>'+x[1]+'</button>').join("")+'</aside><main><div class="top"><div><small>EIS Work Flow Tool <span style="font-size:11px;color:var(--mut);font-weight:400">version 2026.11.26</span></small><h1>'+ttl+'</h1></div><div class="usr"><div><b>'+e(prof.name||prof.email)+'</b><span>'+(cf?(prof.role==="cfd"?"CFD":"EIS Specialist"):role==="cust"?"Airline customer (view only)":"EIS Specialist")+'</span></div><div class="av">'+e((prof.name||prof.email||"?").slice(0,2).toUpperCase())+'</div><button class="sm" data-a="out">Log out</button></div></div>'+b+'</main></div>'+(msg?'<div class="toast" role="status">'+e(msg)+'</div>':'');
+ window.scrollTo(0,y);var c2=document.querySelector(".mss,.stp,.cal");if(c2){c2.scrollLeft=sx;if(c2.classList.contains("cal"))c2.scrollTop=sy2}
  if(msg){var m=msg;setTimeout(()=>{if(msg===m){msg="";var t=document.querySelector(".toast");if(t)t.remove()}},2500)}}
 function act(x){var a=x.dataset.a,v=x.dataset.v,o=O[cid],i=+x.dataset.i,k=+x.dataset.k;
  if(a==="rsopn")return rsOpen();if(a==="rsdl")return rsOpen(true);if(a==="rsup"&&role==="cfd"){var rsf=document.getElementById("rsfile");if(rsf)rsf.click();return}
  if(a==="lt")return setLt(v);if(a==="expm"){expM=expM===v?"":v;return render()}if(a==="exp")return expo(x.dataset.k,v);if(a==="in")return login();if(a==="out")return logout();if(a==="forgot")return forgotPw();if(a==="newpw")return newPw();
- if(role==="cust"&&/^(ldel|lclr|rldel|rlclr|skadd|skedit|sksave|skdel|skcancel|skimgclear|unl|stdup|stddel|rcq|rcedit|rcsave|edit|esave|addc|imp|ver|rej|del|mreset|remmail|remteams|remcopy|addmodel|addmsave|caled|calsave|chat|chatsend)$/.test(a))return;if(a==="v"||a==="oc"||a==="o"){editing=false;rcEdit=false;calEd=false;CE={}}
+ if(role==="cust"&&/^(ldel|lclr|rldel|rlclr|skadd|skedit|sksave|skdel|skcancel|skimgclear|unl|stdup|stddel|rcq|rcedit|rcsave|edit|esave|addc|imp|ver|rej|del|mreset|remmail|remteams|remcopy|addmodel|addmsave|caled|calsave)$/.test(a))return;if(a==="v"||a==="oc"||a==="o"){editing=false;rcEdit=false;calEd=false;CE={}}
  if(a==="v")view=v;else if(a==="sel")sel=i;else if(a==="dv"){if(view!=="tdet")tFrom=view;sel=i;view="tdet"}
  else if(a==="flt")flt=flt===v?"":v;else if(a==="callog")calLog=!calLog;else if(a==="calrst"){var ri=document.querySelector('[data-ce="m:'+x.dataset.m+'"][data-oid="'+x.dataset.oid+'"]');if(ri)ri.value=""}else if(a==="iclr"){ir="";itY="";irY=""}else if(a==="subt"){var kk=o.id+"_"+ST[sel][0]+"_"+x.dataset.j;subOpen[kk]=!subOpen[kk]}else if(a==="rfed"&&role!=="cust")refEd=!refEd;else if(a==="rfup"&&role!=="cust"){refK=+x.dataset.k;var rf=document.getElementById("rffile");if(rf)rf.click();return}else if(a==="stdup"&&role!=="cust"){stdK=ST[sel][0];var sf=document.getElementById("stdfile");if(sf)sf.click();return}else if(a==="stddel")return stdDel();else if(a==="stdget")return stdGet();else if(a==="unl")return setUnl(O[i]);else if(a==="skadd"&&role==="cfd"){skEd="new";skImg=""}else if(a==="skedit"&&role==="cfd"){skEd=x.dataset.k;skImg=((SK||[]).find(z=>z.id===x.dataset.k)||{}).img||""}else if(a==="skcancel"){skEd="";skImg=""}else if(a==="skimgclear"){skImg="";var sb2=document.getElementById("skbox");if(sb2)sb2.innerHTML=skImgH((document.getElementById("sk_n")||{}).value);return}else if(a==="sksave")return saveSk();else if(a==="skdel")return delSk(x.dataset.k);else if(a==="rfdel")return rfDel(o,+x.dataset.k);else if(a==="rfopn")return rfOpen(o,+x.dataset.k)
  else if(a==="o"){if(view!=="tdet")tFrom=view;cid=i;sel=+x.dataset.s;view="tdet"}
@@ -647,10 +645,10 @@ function act(x){var a=x.dataset.a,v=x.dataset.v,o=O[cid],i=+x.dataset.i,k=+x.dat
  else if(a==="remcopy"){var m3=remText(x.dataset.k);navigator.clipboard.writeText("Subject: "+m3.sub+"\n\n"+m3.body).then(()=>{msg="Reminder copied";render()},()=>{msg="Could not copy";render()});return}
  else if(a==="rcq"){var f=x.dataset.f;rcEdit=true;rcLogo=(RC[O[cid].id]||{}).logo||"";render();var t=document.getElementById(f);if(t){t.focus();if(t.setSelectionRange&&t.value)t.setSelectionRange(t.value.length,t.value.length)}return}
  else if(a==="rcedit"){rcEdit=true;rcLogo=(RC[O[cid].id]||{}).logo||""}else if(a==="rccancel")rcEdit=false;else if(a==="rclog")rcLog=!rcLog;else if(a==="rcsave")return saveRc();else if(a==="rcdl")return dlRc();else if(a==="rclogoclear"){rcLogo="";var lb=document.getElementById("lgbox");if(lb)lb.innerHTML=lgHtml();return}
- else if(a==="edit"){if(clk(o))msg="Revenue Service is completed, details are frozen";else editing=true}else if(a==="ecancel")editing=false;else if(a==="esave")return saveEdit();else if(a==="caled"){calEd=true;CE={}}else if(a==="calcancel"){calEd=false;CE={}}else if(a==="calsave")return saveCal();else if(a==="chat"){chatOpen=!chatOpen;if(chatOpen){chatI=O[cid]?cid:0;if(chatO()){render();return loadChat(chatO())}}}else if(a==="chatsend")return sendChat();
+ else if(a==="edit"){if(clk(o))msg="Revenue Service is completed, details are frozen";else editing=true}else if(a==="ecancel")editing=false;else if(a==="esave")return saveEdit();else if(a==="caled"){calEd=true;CE={}}else if(a==="calcancel"){calEd=false;CE={}}else if(a==="calsave")return saveCal();
  else return;render()}
 document.addEventListener("click",ev=>{if(expM&&!ev.target.closest(".expw")){expM="";render()}var x=ev.target.closest("[data-a]");if(!x||x.tagName==="SELECT"||x.tagName==="INPUT"||x.tagName==="TEXTAREA")return;act(x)});
-document.addEventListener("keydown",ev=>{if(ev.key==="Enter"&&ev.target.id==="pw"){login();return}if(ev.key==="Enter"&&!ev.shiftKey&&ev.target.id==="chatin"){ev.preventDefault();sendChat();return}if((ev.key==="Enter"||ev.key===" ")&&ev.target.getAttribute&&ev.target.getAttribute("role")==="button"){ev.preventDefault();act(ev.target)}});
+document.addEventListener("keydown",ev=>{if(ev.key==="Enter"&&ev.target.id==="pw"){login();return}if((ev.key==="Enter"||ev.key===" ")&&ev.target.getAttribute&&ev.target.getAttribute("role")==="button"){ev.preventDefault();act(ev.target)}});
 document.addEventListener("change",ev=>{var x=ev.target,a=x.dataset.a,o=O[cid];
  if(a==="lt"){setLt(x.value);return}
  if(role==="cust"&&/^(skimg|stdfile|chk|file|prog|asg|sd|ed|tt|mdate|rclogo|cstat|sub|rffile|impfile|logv|rcv|gmodfile)$/.test(a))return;
@@ -675,9 +673,47 @@ document.addEventListener("change",ev=>{var x=ev.target,a=x.dataset.a,o=O[cid];
  if(a==="asg")return upd(o,{specialist_id:x.value||null},{sp:x.value||null});
  if(a==="sd"&&x.value)return freezeNow(o).then(()=>upd(o,{start_date:x.value},{start:pd(x.value)}));
  if(a==="ed")return upd(o,{eis_date:x.value||null},{eis:pd(x.value)});
- if(a==="cust"||a==="model"){editing=false;rcEdit=false;cid=+x.value;sel=cur(O[cid]);flt=""}else if(a==="msel")sel=+x.value;else if(a==="fprog")fp=x.value;else if(a==="fstat")fs=x.value;else if(a==="freg")fr=x.value;else if(a==="ireg")ir=x.value;else if(a==="itot")itY=x.value;else if(a==="irev")irY=x.value;else if(a==="iclr"){ir="";itY="";irY=""}else if(a==="iclr2")return;else if(a==="cy")calY=x.value;else if(a==="cpg")calP=x.value;else if(a==="cst")calS=x.value;else if(a==="chatc"){chatI=+x.value;render();return loadChat(chatO())}else return;render()});
-document.addEventListener("input",ev=>{var x=ev.target;if(x.dataset&&x.dataset.a==="q"){q=x.value;var r=document.getElementById("rows");if(r)r.innerHTML=rowsH()}if(x.dataset&&x.dataset.a==="cq"){if(calEd)stashCal();calQ=x.value;var cr=document.getElementById("calrows");if(cr)cr.innerHTML=calBody()}if(x.id==="chatin")chatDraft=x.value});
-setInterval(()=>{if(chatOpen&&role&&role!=="cust"){var o=chatO();if(o)loadChat(o,true)}},15000);
+ if(a==="cust"||a==="model"){editing=false;rcEdit=false;cid=+x.value;sel=cur(O[cid]);flt=""}else if(a==="msel")sel=+x.value;else if(a==="fprog")fp=x.value;else if(a==="fstat")fs=x.value;else if(a==="freg")fr=x.value;else if(a==="ireg")ir=x.value;else if(a==="itot")itY=x.value;else if(a==="irev")irY=x.value;else if(a==="iclr"){ir="";itY="";irY=""}else if(a==="iclr2")return;else if(a==="cy")calY=x.value;else if(a==="cpg")calP=x.value;else if(a==="cst")calS=x.value;else return;render()});
+document.addEventListener("input",ev=>{var x=ev.target;if(x.dataset&&x.dataset.a==="q"){q=x.value;var r=document.getElementById("rows");if(r)r.innerHTML=rowsH()}if(x.dataset&&x.dataset.a==="cq"){if(calEd)stashCal();calQ=x.value;var cr=document.getElementById("calrows");if(cr)cr.innerHTML=calBody()}});
+/* ===== FAQ Chat Bot =====
+   Edit BOT_FAQ to change the questions and answers.
+   q = question shown as a button, a = answer, k = keywords used to match typed questions. */
+var BOT_FAQ=[
+ {q:"Who is the owner for NDA, NEB, training for how it fits into EIS process?",k:"owner nda neb training eis process contact sales gm gate",a:"You need to contact Sales GM for NEB. This is clearly defined in Gate-0, Seq 01000-PW NEB DA executed (New Engine Business Definitive Agreement)."},
+ {q:"What contracts do each engine model require?",k:"contracts contract engine model models require pw1100 pw1500 pw1900 da mou aftermarket",a:"PW1100 \u2013 DA (NEB & Aftermarket)\nPW1500/PW1900 \u2013 Aftermarket / MOU"},
+ {q:"What if NDA is not signed?",k:"nda not signed unsigned mou contract",a:"If NDA is not signed, the MOU is the defining document until the contract is eventually signed."},
+ {q:"How much time will it take to prepare draft IPA?",k:"time long prepare draft ipa hours nicole",a:"Within 48hrs of internal email Nicole will send draft IPA to internal contact."},
+ {q:"Where can we collect the details of IPA ownership?",k:"where collect details ipa ownership owner",a:"WIS Skyline work instruction \"Gate 0-Seq 06000-Intellectual Property Agreement (IPA) provided to Customer\" has been updated with all details."}
+];
+var BOT_NOMATCH="Sorry, I could not find an answer to that. Please pick one of the questions below",
+ botSt="closed",botM=[],botDraft="",botEl=null;
+var BOT_ICO='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="14" rx="3"/><path d="M8 20h8M12 18v2M9 10v1M15 10v1M9 14.5c1.8 1 4.2 1 6 0"/></svg>';
+function botFirst(){var n=nice((prof&&(prof.name||prof.email))||"");return n.split(" ")[0]||"there"}
+function botQs(){return '<div class="bqs"><span>Please select below questions</span>'+BOT_FAQ.map((f,i)=>'<button type="button" class="bq" data-bq="'+i+'">'+e(f.q)+'</button>').join("")+'</div>'}
+function botLogH(){var h='<div class="bmr">'+BOT_ICO+'<div class="bm">Hi, '+e(botFirst())+'! I am Bot</div></div>';
+ botM.forEach(m=>{h+=m.me?'<div class="bm me">'+e(m.x)+'</div>':'<div class="bmr">'+BOT_ICO+'<div class="bm">'+e(m.x)+'</div></div>'});
+ return h+botQs()}
+function botHtml(){if(!role)return"";var l=false,ic=botSt==="closed";
+ var fab='<button type="button" class="botfab noprint'+(l?' l':'')+'" data-bot="toggle" aria-label="'+(ic?'Open help bot':'Close help bot')+'" aria-expanded="'+!ic+'">'+BOT_ICO+'</button>';
+ if(ic)return fab;
+ return '<div class="botbox noprint'+(l?'':' l')+(botSt==="min"?' min':'')+'" role="dialog" aria-label="Chat bot"><div class="both">'+BOT_ICO+'<b>Chat Bot</b><button type="button" data-bot="min" aria-label="'+(botSt==="min"?'Expand chat bot':'Minimize chat bot')+'">'+(botSt==="min"?'&#9633;':'&minus;')+'</button><button type="button" data-bot="close" aria-label="Close chat bot">&times;</button></div><div class="botlog" id="botlog" aria-live="polite">'+botLogH()+'</div><div class="botf"><input id="botin" type="text" placeholder="Type here" aria-label="Type your question" autocomplete="off" maxlength="200" value="'+e(botDraft)+'"><button type="button" data-bot="send" aria-label="Send"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M2.5 21.5 23 12 2.5 2.5 2.5 10l14 2-14 2z"/></svg></button></div></div>'+fab}
+function botDraw(keep){if(!botEl){botEl=document.createElement("div");botEl.id="botroot";document.body.appendChild(botEl)}
+ var inp=document.getElementById("botin"),had=inp&&document.activeElement===inp;botEl.innerHTML=botHtml();
+ var lg=document.getElementById("botlog");if(lg)lg.scrollTop=lg.scrollHeight;if((had||keep)&&botSt==="open"){var n=document.getElementById("botin");if(n)n.focus()}}
+function botAnswer(t){var w=String(t).toLowerCase().replace(/[^a-z0-9 ]/g," ").split(/\s+/).filter(x=>x.length>2),best=-1,bs=0;
+ BOT_FAQ.forEach((f,i)=>{var kw=(f.k+" "+f.q).toLowerCase().replace(/[^a-z0-9 ]/g," ").split(/\s+/),s=0;w.forEach(x=>{if(kw.indexOf(x)>=0)s++});if(s>bs){bs=s;best=i}});
+ return bs>=1&&best>=0?BOT_FAQ[best].a:BOT_NOMATCH+(ACCESS_EMAIL?" or contact "+ACCESS_EMAIL:"")+"."}
+function botAsk(txt,ans){txt=String(txt||"").trim();if(!txt)return;botM.push({me:true,x:txt.slice(0,200)});botM.push({me:false,x:ans!=null?ans:botAnswer(txt)});botM=botM.slice(-40);botDraft="";botDraw(true)}
+function botSync(){if(!role){if(botM.length||botSt!=="closed"){botM=[];botSt="closed";botDraft=""}}botDraw()}
+(function(){var _r=render;render=function(){var r=_r.apply(this,arguments);botSync();return r}})();
+document.addEventListener("click",ev=>{var x=ev.target.closest("[data-bot]");if(!x)return;var a=x.dataset.bot;
+ if(a==="toggle"){botSt=botSt==="closed"?"open":"closed";}
+ else if(a==="min")botSt=botSt==="min"?"open":"min";else if(a==="close")botSt="closed";
+ else if(a==="send"){var i0=document.getElementById("botin");return botAsk(i0&&i0.value)}
+ botDraw()});
+document.addEventListener("click",ev=>{var q=ev.target.closest("[data-bq]");if(!q)return;var f=BOT_FAQ[+q.dataset.bq];if(f)botAsk(f.q,f.a)});
+document.addEventListener("keydown",ev=>{if(ev.target.id==="botin"){if(ev.key==="Enter"){ev.preventDefault();botAsk(ev.target.value)}else if(ev.key==="Escape"){botSt="closed";botDraw()}}});
+document.addEventListener("input",ev=>{if(ev.target.id==="botin")botDraft=ev.target.value});
 boot();
 </script>
 </body>
