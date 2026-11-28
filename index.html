@@ -780,9 +780,9 @@ var BOT_NOMATCH="Sorry, I could not find an answer to that. Please pick one of t
 var BOT_ICO='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="14" rx="3"/><path d="M8 20h8M12 18v2M9 10v1M15 10v1M9 14.5c1.8 1 4.2 1 6 0"/></svg>';
 function botFirst(){var n=nice((prof&&(prof.name||prof.email))||"");return n.split(" ")[0]||"there"}
 function botQs(){return '<div class="bqs"><span>Please select below questions</span>'+BOT_FAQ.map((f,i)=>'<button type="button" class="bq" data-bq="'+i+'">'+e(f.q)+'</button>').join("")+'</div>'}
-function botLogH(){var h='<div class="bmr">'+BOT_ICO+'<div class="bm">Hi, '+e(botFirst())+'! I am Bot</div></div>';
+function botLogH(){var h='<div class="bmr">'+BOT_ICO+'<div class="bm">Hi, '+e(botFirst())+'! I am Bot</div></div>'+botQs();
  botM.forEach(m=>{h+=m.me?'<div class="bm me">'+e(m.x)+'</div>':'<div class="bmr">'+BOT_ICO+'<div class="bm">'+e(m.x)+'</div></div>'});
- return h+botQs()}
+ return h}
 function botHtml(){if(!role)return"";var l=false,ic=botSt==="closed";
  var fab='<button type="button" class="botfab noprint'+(l?' l':'')+'" data-bot="toggle" aria-label="'+(ic?'Open help bot':'Close help bot')+'" aria-expanded="'+!ic+'">'+BOT_ICO+'</button>';
  if(ic)return fab;
